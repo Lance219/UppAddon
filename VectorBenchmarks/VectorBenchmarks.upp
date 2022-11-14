@@ -1,0 +1,10 @@
+uses
+	Core,
+	CoreExt;
+
+file
+	VectorBenchmarks.cpp;
+
+mainconfig
+	"" = "";
+
