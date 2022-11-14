@@ -65,6 +65,7 @@ inline constexpr bool vptr_at_beginning = offsetof(_detl::S, i)==0;
 
 #include "bits/vector.hpp"
 
+// note: only checked against GCC version of std::string
 #include "bits/basic_string_relocate.hpp"
 }//eons
 
