@@ -1,0 +1,17 @@
+description "Some common utility that  may of common interest\377";
+
+uses
+	Core;
+
+file
+	CoreExt.h,
+	bits/vcore.hpp,
+	bits/bit.cpp,
+	bits/bit.h,
+	bits/IntOfSize.hpp,
+	bits/relocatable.hpp,
+	bits/vector.hpp,
+	bits/basic_string_relocate.hpp,
+	src.tpp,
+	srcimp.tpp;
+

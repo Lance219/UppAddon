@@ -1,0 +1,16 @@
+description "Test package for package CtrlCoreExt\377";
+
+uses
+	CtrlCoreExt,
+	plugin/gtest,
+	CoreExt,
+	CtrlLib;
+
+file
+	Test1.cpp,
+	Test1.h,
+	main.cpp;
+
+mainconfig
+	"" = "";
+

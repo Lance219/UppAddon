@@ -1,0 +1,18 @@
+description "Testing CoreExt package\377";
+
+uses
+	CoreExt,
+	plugin/gtest,
+	CtrlCore,
+	CtrlCoreExt;
+
+file
+	main.cpp,
+	CoreExtTest.h,
+	CoreExtTest.cpp,
+	relocated_adjustment.cpp,
+	relocated_adjustment.h;
+
+mainconfig
+	"" = "";
+

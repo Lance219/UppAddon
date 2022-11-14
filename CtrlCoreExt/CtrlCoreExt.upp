@@ -1,0 +1,10 @@
+description "Extension to Upp::CtrlCore\377";
+
+uses
+	CtrlCore;
+
+file
+	CtrlCoreExt.h,
+	CtrlCoreExt.cpp,
+	src.tpp;
+
