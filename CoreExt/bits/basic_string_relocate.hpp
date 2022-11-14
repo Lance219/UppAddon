@@ -11,10 +11,12 @@ void DoPostRelocationAdjustment(
 {
 	// we understand the first member of *this is the pointer to
 	// data, but let's make sure.
-	ASSERT( *reinterpret_cast<lz::ptrint*>(obj) == lz::AsInt(obj->data()) );
-//	RLOG(obj);
-//	RLOG((void*)obj->data());
-	
+	//
+#ifdef _DEBUG
+	std::string s("test");
+	ASSERT( *reinterpret_cast<lz::ptrint*>(&s) == lz::AsInt(s.data()) );
+#endif
+
 	if(	lz::AsInt( obj->data() ) == lz::AsInt( old ) + 16 )
 		*reinterpret_cast<lz::ptrint*>(obj) = lz::AsInt( obj ) + 16;
 }
