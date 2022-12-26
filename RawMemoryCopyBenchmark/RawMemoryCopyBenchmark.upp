@@ -1,0 +1,12 @@
+description "Test stl and Upp way of copying block of raw memory\377";
+
+uses
+	Core,
+	CoreExt;
+
+file
+	RowMemoryCopyBenchmark.cpp;
+
+mainconfig
+	"" = "";
+

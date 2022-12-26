@@ -50,7 +50,7 @@ public:
 	   {
 	       (*this)[i].~T();
 	   }
-	   Upp::MemoryFree(core.data);
+	   raw_free(core.data);
 	}
 	
 	constexpr reference at( size_type pos ){
@@ -121,70 +121,17 @@ public:
 	
 	constexpr void push_back( const T& value )
 	{
-		using trait = relocate_traits<T>;
-		const T * prev;
-		if constexpr( trait::value != 0 ){
-			prev = data();
-		}
-		core.push_back();
-		do_relocate_adjust(data(), prev, core.used-1, prev, prev+core.used-1);
-
-		if constexpr ( std::is_nothrow_constructible_v<T, const T&> )
-			new(core.back())T(value);
-		else{
-			try{
-				new(core.back())T(value);
-			}catch(...){
-				--core.used;
-				throw;
-			}
-		}
+		do_emplace_back( value );
 	}
 	constexpr void push_back( T&& value )
 	{
-		using trait = relocate_traits<T>;
-		const T * prev;
-		if constexpr( trait::value != 0 ){
-			prev = data();
-		}
-		
-		core.push_back();
-		do_relocate_adjust(data(), prev, core.used-1, prev, prev+core.used-1);
-		
-		if constexpr ( std::is_nothrow_constructible_v<T, T&&> )
-			new( core.back() )T( std::move(value) );
-		else{
-			try{
-				new(core.back() )T( std::move(value) );
-			}catch(...){
-				--core.used;
-				throw;
-			}
-		}
+		do_emplace_back( std::move(value) );
 	}
 	
 	template< class... Args >
 	constexpr reference emplace_back( Args&&... args )
 	{
-		using trait = relocate_traits<T>;
-		const T * prev;
-		if constexpr( trait::value != 0 ){
-			prev = data();
-		}
-		core.push_back();
-		do_relocate_adjust(data(), prev, core.used-1, prev, prev+core.used-1);
-
-		if constexpr ( std::is_nothrow_constructible_v<T, Args...> )
-			new( core.back() )T( std::forward<Args>(args)... );
-		else{
-			try{
-				new( core.back() )T( std::forward<Args>(args)... );
-			}catch(...){
-				--core.used;
-				throw;
-			}
-		}
-
+		do_emplace_back( std::forward<Args>(args)... );
 		return back();
 	}
 	
@@ -200,6 +147,7 @@ public:
 	constexpr void swap( vector& other ) noexcept
 	{
 		char buff[sizeof(other)];
+
 		memcpy(buff, this, sizeof(other));
 		memcpy(this, &other, sizeof(other));
 		memcpy(&other, buff, sizeof(other));
@@ -217,6 +165,10 @@ protected:
 	
 	template <class U>
 	constexpr iterator insert_one(const_iterator  pos, U u);
+	
+	template< class... Args >
+	constexpr void do_emplace_back( Args&&... args );
+
 };
 
 template <relocatable T>
@@ -225,16 +177,7 @@ constexpr vector<T>::vector( typename vector<T>::size_type count/*,
 {
 	reserve(count);
 	for(; core.used < count; ++core.used)
-//	{
 		new( data() + core.used ) T;
-//		if constexpr (!std::is_nothrow_constructible_v<T, const T&>){
-//			++ core.used; // exception saftey concern
-//		}
-//	}
-//	if constexpr (std::is_nothrow_constructible_v<T, const T&>){
-//		core.used = count;
-//	}
-	
 }
 
 template <relocatable T>
@@ -268,7 +211,6 @@ constexpr void vector<T>::reserve( typename vector<T>::size_type new_cap )
 
 	core.reserve( new_cap );
 
-	//if constexpr( trait::value != 0 ){
 	do_relocate_adjust(data(), prev, core.used, prev, prev + core.used);
 	
 }
@@ -322,6 +264,31 @@ vector<T>::insert_one(typename vector<T>::const_iterator  pos, U u)
 	++core.used;
 	return begin() + rbefore;
 }
+
+template<relocatable T>
+template< class... Args > constexpr void
+vector<T>::do_emplace_back( Args&&... args )
+{
+	using trait = relocate_traits<T>;
+	const T * prev;
+	if constexpr( trait::value != 0 ){
+		prev = data();
+	}
+	core.push_back();
+	do_relocate_adjust(data(), prev, core.used-1, prev, prev+core.used-1);
+
+	if constexpr ( std::is_nothrow_constructible_v<T, Args...> )
+		new( core.back() )T( std::forward<Args>(args)... );
+	else{
+		try{
+			new( core.back() )T( std::forward<Args>(args)... );
+		}catch(...){
+			--core.used;
+			throw;
+		}
+	}
+}
+
 
 //template< relocatable T>
 //constexpr typename vector<T>::iterator
@@ -421,7 +388,7 @@ vector<T>::insert( typename vector<T>::const_iterator pos, InputIt first, InputI
 // consistent.
 //
 // `prev_start` is this->data() before relocation,
-// `prev_start` is (this->data() + core.used) befoe relocation
+// `prev_end` is (this->data() + core.used) befoe relocation
 template< relocatable T>
 inline void vector<T>::
 do_relocate_adjust(T* obj, const T* old, unsigned n, const T* prev_start, const T* prev_end)

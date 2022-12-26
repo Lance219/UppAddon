@@ -1,6 +1,6 @@
 #include <string>
 
-// std::basic_string (possibly) has a pointer to relative to *this;
+// std::basic_string (possibly) has a pointer relative to *this;
 // make it workable with lz::vector
 
 template <typename chT>

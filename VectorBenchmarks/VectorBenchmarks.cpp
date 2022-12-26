@@ -2,22 +2,25 @@
 #include <CoreExt/CoreExt.h>
 
 #include <vector>
+#include <string>
+#include <iostream>
 
 using namespace Upp;
 
-const int N = 400000;
-const int M = 30;
+const int N = 100000;
+const int M = 4000;
 const size_t buffsize = 128;
 
 struct Buff{
-	Buff()=default;
-	Buff(const Buff&)=default;
-	Buff(Buff&)=default;
+	Buff()noexcept=default;
+	Buff(const Buff&)noexcept=default;
+	Buff(Buff&&)noexcept=default;
+	
 	char buff[buffsize];
 };
 
 namespace Upp{
-NTL_MOVEABLE(Buff);
+	NTL_MOVEABLE( Buff );
 }
 
 void TestInt();
@@ -35,8 +38,19 @@ CONSOLE_APP_MAIN
 
 void TestCharBuffer()
 {
+	Buff buff;
+//	for(int i=0; i<buffsize; ++i)
+//		std::cout<< buff.buff[i]<<std::endl;
 	for(int i=0; i < M; ++i)
 	{
+		{
+			RTIMING("Upp::Vector<Buff>::push_back");
+			Upp::Vector<Buff> v;
+			for(int i = 0; i < N; i++){
+				Buff b;
+				v.Add(b);
+			}
+		}
 		{
 			RTIMING("std::vector<Buff>::push_back");
 			std::vector<Buff> v;
@@ -50,18 +64,10 @@ void TestCharBuffer()
 			lz::vector<Buff> v;
 			for(int i = 0; i < N; i++){
 				Buff b;
+				//v.emplace_back();
 				v.push_back(b);
 			}
 		}
-		{
-			RTIMING("Upp::Vector<Buff>::push_back");
-			Upp::Vector<Buff> v;
-			for(int i = 0; i < N; i++){
-				Buff b;
-				v.Add(b);
-			}
-		}
-
 	}
 }
 
@@ -427,5 +433,15 @@ TIMING lz::vector<String>::emplace_back: 27.98 ms - 27.98 us (28.00 ms / 1000 ),
 TIMING vector<String>::emplace_back: 45.98 ms - 45.98 us (46.00 ms / 1000 ), min:  0.00 ns, max:  1.00 ms, nesting: 0 - 1000
 TIMING lz::vector<string>::push_back: 63.98 ms - 63.98 us (64.00 ms / 1000 ), min:  0.00 ns, max:  1.00 ms, nesting: 0 - 1000
 TIMING vector<string>::emplace_back: 87.98 ms - 87.98 us (88.00 ms / 1000 ), min:  0.00 ns, max:  1.00 ms, nesting: 0 - 1000
+
+
+After change NewSize() algorithm to 
+if current alloced = 0, new alloced is 8;
+else double current alloced until reach implementation limit.
+
+* /home/lance/.cache/upp.out/UppAddon/CLANG.Blitz.Shared/VectorBenchmarks 16.11.2022 23:44:49, user: lance
+TIMING Upp::Vector<Buff>::push_back: 21.73 s  - 72.43 ms (21.73 s  / 300 ), min: 66.00 ms, max: 104.00 ms, nesting: 0 - 300
+TIMING lz::vector<Buff>::push_back: 14.05 s  - 46.83 ms (14.05 s  / 300 ), min: 42.00 ms, max: 69.00 ms, nesting: 0 - 300
+TIMING std::vector<Buff>::push_back: 13.40 s  - 44.67 ms (13.40 s  / 300 ), min: 41.00 ms, max: 72.00 ms, nesting: 0 - 300
 
 */

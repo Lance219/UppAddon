@@ -4,8 +4,7 @@
 #include <Core/Core.h>
 #include <CtrlCore/CtrlCore.h>
 #include <plugin/gtest/gtest.h>
+
 #include "relocated_adjustment.h"
-
-
 
 #endif

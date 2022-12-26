@@ -1,3 +1,9 @@
+// facility to get the class name from a member function pointer
+//
+template<class T> struct get_class;
+template<class T, class R>
+struct get_class<R T::*> { using type = T; };
+
 
 // a value of -1 indicate that we don't know if the class('s object) is trivially
 // relocatable and if not, how to do adjustment after relocation
@@ -21,12 +27,6 @@ struct relocate_traits<T> { static constexpr int value = 0; };
 
 template <class T>
 inline constexpr bool is_trivially_relocatable_v = relocate_traits<T>::value == 0;
-
-// facility to get the class name from a member function pointer
-//
-template<class T> struct get_class; 
-template<class T, class R>
-struct get_class<R T::*> { using type = T; };
 
 
 template <class T>

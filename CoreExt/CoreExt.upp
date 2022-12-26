@@ -5,12 +5,12 @@ uses
 
 file
 	CoreExt.h,
+	bits/relocatable.hpp,
 	bits/vcore.hpp,
+	bits/vector.hpp,
 	bits/bit.cpp,
 	bits/bit.h,
 	bits/IntOfSize.hpp,
-	bits/relocatable.hpp,
-	bits/vector.hpp,
 	bits/basic_string_relocate.hpp,
 	src.tpp,
 	srcimp.tpp;
