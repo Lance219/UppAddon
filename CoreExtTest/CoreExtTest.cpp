@@ -11,6 +11,33 @@
 template <class T>
 using pai = lz::ptr_as_int<T>;
 
+TEST(CoreExt, ThisFnMacro)
+{
+	struct S{
+		void Func(){
+		};
+		
+		int Func2(int ){ return 5; }
+		void Test()
+		{
+			THISFN(Func)();
+		}
+		int TestInt(){
+			return THISFN(Func2)(8);
+		}
+	};
+	
+	struct T : S{
+		int TestInt(){
+			return THISFN(Func2)(8);
+		}
+	};
+	S s;
+	s.Test();
+	EXPECT_EQ(s.TestInt(),5);
+	EXPECT_EQ(T().TestInt(), 5);
+}
+
 TEST(CoreExt, PtrAsIntIncDec)
 {
     const char* msg = "hello";

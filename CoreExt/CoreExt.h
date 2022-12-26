@@ -17,7 +17,7 @@
 //
 #ifdef THISFN
 #undef THISFN
-#define THISFN(memfun) std::bind_front(&std::rm_cvref<decltype(*this)>::memfun, this)
+#define THISFN(memfun) std::bind_front(&std::remove_cvref_t<decltype(*this)>::memfun, this)
 #endif
 
 namespace lz {
@@ -30,7 +30,7 @@ enum class tribool : char { False, No = False, Off = False,
 class StrLiteral
 {
 public:
-	constexpr StrLiteral(const StrLiteral& l)=default;
+	constexpr StrLiteral(const StrLiteral& l) = default;
 	explicit constexpr StrLiteral(const char * s):p(s){}
 	
 	constexpr operator const char *()const{ return p; }
