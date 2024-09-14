@@ -16,8 +16,8 @@ struct relocate_traits<T> { static constexpr int value = 0; };
 
 template <class T>
 concept UppMoveable = requires{
-	typename T::MoveableBase; // Note, this require to add a typedef in Topt.h/Moveable definition
-	requires std::derived_from<T, Upp::Moveable<T, typename T::MoveableBase> >;
+	//typename T::MoveableBase; // Note, this require to add a typedef in Topt.h/Moveable definition
+	requires std::derived_from<T, Upp::Moveable<T> >;
 };
 
 // the following will teach compiler to treat all Upp::Moveable derivatives as
