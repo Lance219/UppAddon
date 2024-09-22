@@ -118,7 +118,10 @@ struct CtrlHack : public Pte<CtrlHack>
 		static_assert( sizeof(c) == sizeof(Ctrl) );
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
-		static_assert ( offsetof ( CtrlHack, WhenAction ) == offsetof ( Ctrl, WhenAction ), "Unexpected difference in class/struct layout" );
+		static_assert (
+			offsetof ( CtrlHack, WhenAction ) == offsetof ( Ctrl, WhenAction ),
+			"Unexpected difference in class/struct layout"
+		);
 #pragma GCC diagnostic pop
 //		ASSERT ( offsetof ( CtrlHack, WhenAction ) == offsetof ( Ctrl, WhenAction ) );
 		ASSERT ( e.IsShutdown() && !f.IsShutdown() );
