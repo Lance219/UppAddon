@@ -183,18 +183,14 @@ inline bool IsOwned ( CtrlClass auto* ctrl )
 {
 	return IsOwned ( *ctrl );
 }
-//inline int32 GetReserved( CtrlClass auto& ctrl)
-//{
-//	return reinterpret_cast<CtrlHack*> ( &ctrl )->GetReserved();
-//}
 
 #ifdef CPU_64
-inline int32 GetReserved( CtrlClass auto& ctrl)
+inline int32 GetReserved( const CtrlClass auto& ctrl)
 {
-	return reinterpret_cast<CtrlHack*> ( &ctrl )->GetReserved();
+	return reinterpret_cast<const CtrlHack&> ( ctrl ).GetReserved();
 }
 
-inline int32 GetReserved( CtrlClass auto* ctrl)
+inline int32 GetReserved( const CtrlClass auto* ctrl)
 {
 	return GetReserved( *ctrl );
 }
