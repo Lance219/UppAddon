@@ -12,7 +12,7 @@ using Upp::Pte;
 using Upp::Rect16;
 using Upp::CtrlFrame;
 using Upp::PackedData;
-using Upp::int32;
+using Upp::int32, Upp::int16, Upp::byte;
 
 
 template <class T>
@@ -86,6 +86,12 @@ struct CtrlHack : public Pte<CtrlHack>
 	{
 		return destroying;
 	}
+
+#ifdef CPU_64
+	int32	GetReserved()const{ return reserved; }
+	void	SetReserved(int32 v){ reserved = v;  }
+
+#endif
 
 
 	void		SetOwned ( bool b = true )
@@ -165,7 +171,6 @@ inline auto MarkAsOwned ( CtrlClass auto* ctrl, bool owned = true )
 }
 
 
-//template <class T>
 inline bool IsOwned ( CtrlClass auto& ctrl )
 {
 //	static_assert ( std::is_base_of<Upp::Ctrl, T>::value || std::is_same<Ctrl, T>::value,
@@ -178,6 +183,33 @@ inline bool IsOwned ( CtrlClass auto* ctrl )
 {
 	return IsOwned ( *ctrl );
 }
+//inline int32 GetReserved( CtrlClass auto& ctrl)
+//{
+//	return reinterpret_cast<CtrlHack*> ( &ctrl )->GetReserved();
+//}
+
+#ifdef CPU_64
+inline int32 GetReserved( CtrlClass auto& ctrl)
+{
+	return reinterpret_cast<CtrlHack*> ( &ctrl )->GetReserved();
+}
+
+inline int32 GetReserved( CtrlClass auto* ctrl)
+{
+	return GetReserved( *ctrl );
+}
+
+inline void SetReserved( CtrlClass auto& ctrl, int32 value)
+{
+	reinterpret_cast<CtrlHack&> ( ctrl ).SetReserved( value );
+}
+
+inline void SetReserved( CtrlClass auto* ctrl, int32 value)
+{
+	SetReserved( *ctrl, value );
+}
+
+#endif
 
 }//eons lz
 

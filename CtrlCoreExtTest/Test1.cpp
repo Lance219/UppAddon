@@ -58,6 +58,15 @@ TEST ( CtrlHackTest, OwnedFlag )
 	EXPECT_FALSE ( lz::IsOwned ( c ) );
 }
 
+TEST ( CtrlHackTest, ReclaimPaddingSpace )
+{
+#ifdef CPU_64
+	Ctrl c;
+	lz::SetReserved( c, 0x12345678);
+	EXPECT_EQ ( 0x12345678, lz::GetReserved(c) );
+#endif
+}
+
 // Ctrl Relocate needs rework and redesign
 //TEST ( CtrlHackTest, RolcationCtrlWithParentNoSibling )
 //{
