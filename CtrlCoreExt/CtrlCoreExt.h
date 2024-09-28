@@ -4,6 +4,9 @@
 #include <CtrlCore/CtrlCore.h>
 #include <concepts>
 
+#define IMAGECLASS CtrlExtImg
+#define IMAGEFILE <CtrlCoreExt/ext.iml>
+#include <Draw/iml_header.h>
 
 namespace lz{
 

@@ -6,5 +6,6 @@ uses
 file
 	CtrlCoreExt.h,
 	CtrlCoreExt.cpp,
-	src.tpp;
+	src.tpp,
+	ext.iml;
 

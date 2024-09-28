@@ -1,4 +1,7 @@
 #include "CtrlCoreExt.h"
+#define IMAGECLASS CtrlExtImg
+#define IMAGEFILE <CtrlCoreExt/ext.iml>
+#include <Draw/iml_source.h>
 
 namespace lz
 {
