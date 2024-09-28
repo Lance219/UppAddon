@@ -10,15 +10,14 @@ struct get_class<R T::*> { using type = T; };
 //
 template <class T> struct relocate_traits { static constexpr int value = -1; };
 
+template <class T>
+concept UppMoveable = requires{
+	requires std::is_base_of_v< Upp::Moveable<T>, T >;
+};
+
 // a value of 0 indicates object of T can be move around like raw bytes.
 template <class T> requires std::is_trivial_v<T>
 struct relocate_traits<T> { static constexpr int value = 0; };
-
-template <class T>
-concept UppMoveable = requires{
-//	requires std::derived_from<T, Upp::Moveable<T> >;
-	requires std::is_base_of_v< Upp::Moveable<T>, T >;
-};
 
 // the following will teach compiler to treat all Upp::Moveable derivatives as
 // trivially relocatable

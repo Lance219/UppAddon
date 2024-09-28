@@ -52,7 +52,7 @@ inline constexpr StrLiteral operator""_z(const char *str, std::size_t)
 
 template <class T>
 struct ptr_as_int {
-    lz::ptrint p;
+    ptrint p;
     ptr_as_int() = default;
     ptr_as_int(const ptr_as_int&) = default;
     ptr_as_int(T* ptr)
