@@ -20,8 +20,11 @@
 #define THISFN(memfun) std::bind_front(&std::remove_cvref_t<decltype(*this)>::memfun, this)
 #endif
 
-namespace lz {
-	
+#define BEGIN_NAMESPACE_LZ namespace lz{
+#define END_NAMESPACE }
+
+
+BEGIN_NAMESPACE_LZ
 enum class tribool : char { False, No = False, Off = False,
 	True, Yes = True, On = Yes,
 	Null
@@ -142,6 +145,6 @@ inline constexpr bool vptr_at_beginning = offsetof(_detl::S, i) == 0;
 
 // note: only checked against GCC version of std::string
 #include "bits/basic_string_relocate.hpp"
-} // eons
+END_NAMESPACE
 
 #endif
