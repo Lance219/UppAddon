@@ -25,6 +25,7 @@
 
 
 BEGIN_NAMESPACE_LZ
+
 enum class tribool : char { False, No = False, Off = False,
 	True, Yes = True, On = Yes,
 	Null
