@@ -1,0 +1,8 @@
+uses
+	CtrlLib,
+	CtrlCoreExt;
+
+file
+	CtrlLibExt.h,
+	bits/using_upp_namespace.h;
+

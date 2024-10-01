@@ -12,6 +12,7 @@ file
 	bits/bit.h,
 	bits/IntOfSize.hpp,
 	bits/basic_string_relocate.hpp,
+	bits/using_upp_names.h,
 	src.tpp,
 	srcimp.tpp;
 

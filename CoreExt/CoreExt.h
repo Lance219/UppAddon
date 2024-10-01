@@ -25,10 +25,12 @@
 
 
 BEGIN_NAMESPACE_LZ
+#include "bits/using_upp_names.h"
 
-enum class tribool : char { False, No = False, Off = False,
-	True, Yes = True, On = Yes,
-	Null
+enum class tribool : char {
+	False, No		= False,	Off = False,
+	True,  Yes		= True,		On  = Yes,
+	Null,  Unknown  = Null
 };
 
 class StrLiteral

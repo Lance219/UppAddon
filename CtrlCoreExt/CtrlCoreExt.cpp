@@ -3,9 +3,7 @@
 #define IMAGEFILE <CtrlCoreExt/ext.iml>
 #include <Draw/iml_source.h>
 
-namespace lz
-{
-
+BEGIN_NAMESPACE_LZ
 
 // it can be demonstrated that when a Ctrl to be relocated has parents,
 // has 1 or 0 sibling and no children, it cannot be adjusted reliably
@@ -53,4 +51,4 @@ namespace lz
 	}
 
 
-}
+END_NAMESPACE

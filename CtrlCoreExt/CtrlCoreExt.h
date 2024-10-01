@@ -3,6 +3,7 @@
 
 #include <CtrlCore/CtrlCore.h>
 #include <concepts>
+#include <CoreExt/CoreExt.h>
 
 #define IMAGECLASS CtrlExtImg
 #define IMAGEFILE <CtrlCoreExt/ext.iml>
@@ -10,13 +11,7 @@
 
 namespace lz{
 
-using Upp::Ctrl;
-using Upp::Pte;
-using Upp::Rect16;
-using Upp::CtrlFrame;
-using Upp::PackedData;
-using Upp::int32, Upp::int16, Upp::byte;
-
+#include "bits/using_upp_names.h"
 
 template <class T>
 concept CtrlClass = std::derived_from<T, Ctrl>;

@@ -1,11 +1,13 @@
 description "Extension to Upp::CtrlCore\377";
 
 uses
-	CtrlCore;
+	CtrlCore,
+	CoreExt;
 
 file
 	CtrlCoreExt.h,
 	CtrlCoreExt.cpp,
 	src.tpp,
-	ext.iml;
+	ext.iml,
+	bits/using_upp_names.h;
 
