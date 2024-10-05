@@ -23,4 +23,16 @@ topic "";
 [ {{10000F(128)G(128)@1 [s0;%% [* Public Method List]]}}&]
 [s0; &]
 [ {{10000F(128)G(128)@1 [s0;%% [* Constructor detail]]}}&]
-[s0;%% ]]
+[s5;@(0.0.255) &]
+[s5;:lz`:`:MarkAsOwned`(CtrlClass auto`&`,bool`): [@(0.0.255) auto`&]_[* MarkAsOwned]([*@4 C
+trlClass][@(0.0.255) `&]_[*@3 ctrl], [@(0.0.255) bool]_[*@3 owned][@(0.0.255) `=true])&]
+[s2; [%%  ][*@3 ctrl ]Ctrl object whose[*  ][*@3 owned] flag to be set.&]
+[s2;%%  [%-*@3 owned] .value to set to&]
+[s2;%% &]
+[s2;%% Mark a dynamically allocated [%-*@3 ctrl ]as owned so that a 
+concious owner takes the responsibility to destruct it.&]
+[s2;%% &]
+[s0;l288;%% Note the [%-*@3 owned] flag has no specific default/initial 
+value to a given Ctrl object (Ctrl is not aware of it hence its 
+constructor might not touch it at all). Need to be set to intended 
+value to be certain what value it`'s taking.]]

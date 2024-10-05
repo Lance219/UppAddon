@@ -1,11 +1,11 @@
-using Upp::Point, Upp::uint16, Upp::dword, Upp::uint8, Upp::byte,
+using Upp::String, Upp::Point, Upp::uint16, Upp::dword, Upp::uint8, Upp::byte,
 	Upp::int16, Upp::int32,
-	Upp::Vector, Upp::Rect, Upp::Size;
-using Upp::String, Upp::Color, Upp::Value, Upp::Null;
-using Upp::Alignment, Upp::ALIGN_BOTTOM, Upp::ALIGN_CENTER,
+	Upp::Vector, Upp::Rect, Upp::Size,
+	Upp::Color, Upp::Value, Upp::Null, Upp::IsNull,
+	Upp::Alignment, Upp::ALIGN_BOTTOM, Upp::ALIGN_CENTER,
 	Upp::ALIGN_JUSTIFY, Upp::ALIGN_LEFT, Upp::ALIGN_NULL,
-	Upp::ALIGN_RIGHT, Upp::ALIGN_TOP;
-using Upp::One, Upp::t_, Upp::Moveable;
-using Upp::Single, Upp::Gate1, Upp::GateN, Upp::Event;
-using Upp::Swap, Upp::BeepError, Upp::Panic;
-using Upp::Pte, Upp::Rect16;
+	Upp::ALIGN_RIGHT, Upp::ALIGN_TOP,
+	Upp::One, Upp::t_, Upp::Moveable,
+	Upp::Single, Upp::Gate1, Upp::GateN, Upp::Event,
+	Upp::Swap, Upp::BeepError, Upp::Panic,
+	Upp::Pte, Upp::Rect16;

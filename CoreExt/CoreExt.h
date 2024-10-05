@@ -12,9 +12,8 @@
 #include <type_traits>
 #include <utility>
 
-// if you ever need to #include <CtrCore/CtrlCore.h>, do it before include this one
-// to avoid collision
-//
+#include <Core/Core.h>
+
 #ifdef THISFN
 #undef THISFN
 #define THISFN(memfun) std::bind_front(&std::remove_cvref_t<decltype(*this)>::memfun, this)
@@ -26,6 +25,7 @@
 
 BEGIN_NAMESPACE_LZ
 #include "bits/using_upp_names.h"
+#include "bits/IntOfSize.hpp"
 
 enum class tribool : char {
 	False, No		= False,	Off = False,
@@ -53,7 +53,6 @@ inline constexpr StrLiteral operator""_z(const char *str, std::size_t)
 }
 
 
-#include "bits/IntOfSize.hpp"
 //#include "bit.h"
 
 template <class T>
@@ -129,7 +128,7 @@ struct ptr_as_int {
     lz::ptrint operator&(lz::ptrint v) { return p & v; }
 };
 
-namespace _detl {
+namespace _detail {
     struct S {
         int i;
         virtual ~S();
@@ -141,7 +140,7 @@ namespace _detl {
 // the class object.
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Winvalid-offsetof"
-inline constexpr bool vptr_at_beginning = offsetof(_detl::S, i) == 0;
+inline constexpr bool vptr_at_beginning = offsetof(_detail::S, i) == 0;
 #pragma GCC diagnostic pop
 
 #include "bits/vector.hpp"
@@ -149,5 +148,12 @@ inline constexpr bool vptr_at_beginning = offsetof(_detl::S, i) == 0;
 // note: only checked against GCC version of std::string
 #include "bits/basic_string_relocate.hpp"
 END_NAMESPACE
+
+template<>
+inline bool Upp::IsNull(const lz::tribool& b)
+{
+	return b == lz::tribool::Null;
+}
+
 
 #endif
