@@ -52,7 +52,7 @@ inline constexpr StrLiteral operator""_z(const char *str, std::size_t)
 	return StrLiteral(str);
 }
 
-
+#define tz(s) StrLiteral(t_(s))
 //#include "bit.h"
 
 template <class T>
