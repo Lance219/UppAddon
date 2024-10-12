@@ -63,10 +63,18 @@ struct CtrlHack : public Pte<CtrlHack>
 	bool         layout_id_literal:1; // info_ptr points to layout char * literal, no heap involved
 	bool         multi_frame:1; // there is more than single frame, they are stored in heap
 	bool         top:1;				//31
+	bool         megarect:1;        //32
 	// below are added fields
-	bool		 owned:1;           //32
+	
 #ifdef CPU_64
-	int32		 reserved;
+	union{
+		int32 padding;
+		struct{
+			bool		 owned:1;           //33
+		};
+	};
+	int32 GetReserved()const{ return padding; }
+	void SetReserved(int32 v){ padding = v; }
 #endif
 	// end of block for added fields
 
@@ -85,11 +93,11 @@ struct CtrlHack : public Pte<CtrlHack>
 		return destroying;
 	}
 
-#ifdef CPU_64
-	int32	GetReserved()const{ return reserved; }
-	void	SetReserved(int32 v){ reserved = v;  }
-
-#endif
+//#ifdef CPU_64
+//	int32	GetReserved()const{ return reserved; }
+//	void	SetReserved(int32 v){ reserved = v;  }
+//
+//#endif
 
 
 	void		SetOwned ( bool b = true )
@@ -155,9 +163,6 @@ inline auto& MarkAsOwned ( CtrlClass auto& ctrl, bool owned = true )
 	static CtrlHack h;
 #endif
 
-//	static_assert ( std::is_base_of<Upp::Ctrl, T>::value ||
-//					std::is_same<Upp::Ctrl, T>::value,
-//					"Expect Ctrl or its derivative" );
 	reinterpret_cast<CtrlHack*> ( &ctrl )->SetOwned ( owned );
 	return ctrl;
 }

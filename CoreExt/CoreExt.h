@@ -22,6 +22,9 @@
 #define BEGIN_NAMESPACE_LZ namespace lz{
 #define END_NAMESPACE }
 
+#define INOUT
+#define OUT
+
 
 BEGIN_NAMESPACE_LZ
 #include "bits/using_upp_names.h"
