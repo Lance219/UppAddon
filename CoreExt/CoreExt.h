@@ -26,6 +26,31 @@
 #define OUT
 
 
+#ifndef _CXX17_CONSTEXPR
+# if __cplusplus >= 201703L
+#  define _CXX17_CONSTEXPR constexpr
+# else
+#  define _CXX17_CONSTEXPR
+# endif
+#endif
+
+#ifndef _CXX20_CONSTEXPR
+# if __cplusplus >= 202002L
+#  define _CXX20_CONSTEXPR constexpr
+# else
+#  define _CXX20_CONSTEXPR
+# endif
+#endif
+
+#ifndef _CXX23_CONSTEXPR
+# if __cplusplus >= 202100L
+#  define _CXX23_CONSTEXPR constexpr
+# else
+#  define _CXX23_CONSTEXPR
+# endif
+#endif
+
+
 BEGIN_NAMESPACE_LZ
 #include "bits/using_upp_names.h"
 #include "bits/IntOfSize.hpp"
