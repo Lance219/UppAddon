@@ -9,5 +9,7 @@ file
 	CtrlCoreExt.cpp,
 	src.tpp,
 	ext.iml,
+	bits/FakeCtrl.h,
+	bits/FakeCtrl.cpp,
 	bits/using_upp_names.h;
 

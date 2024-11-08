@@ -12,6 +12,7 @@
 namespace lz{
 
 #include "bits/using_upp_names.h"
+#include "bits/FakeCtrl.h"
 
 template <class T>
 concept CtrlClass = std::derived_from<T, Ctrl>;

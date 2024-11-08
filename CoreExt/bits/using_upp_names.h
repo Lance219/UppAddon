@@ -1,4 +1,4 @@
-using Upp::String, Upp::Point, Upp::uint16, Upp::dword, Upp::uint8, Upp::byte,
+using Upp::String, Upp::WString, Upp::Point, Upp::uint16, Upp::dword, Upp::uint8, Upp::byte,
 	Upp::int16, Upp::int32,
 	Upp::Vector, Upp::Rect, Upp::Size,
 	Upp::Color, Upp::Value, Upp::Null, Upp::IsNull,
@@ -8,4 +8,5 @@ using Upp::String, Upp::Point, Upp::uint16, Upp::dword, Upp::uint8, Upp::byte,
 	Upp::One, Upp::t_, Upp::Moveable,
 	Upp::Single, Upp::Gate1, Upp::GateN, Upp::Event,
 	Upp::Swap, Upp::BeepError, Upp::Panic,
-	Upp::Pte, Upp::Rect16;
+	Upp::Pte, Upp::Rect16,
+	Upp::wchar, Upp::max, Upp::min, Upp::Buffer;

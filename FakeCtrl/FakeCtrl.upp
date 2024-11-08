@@ -1,0 +1,5 @@
+description "simplified leaf Ctrl-like thing\377";
+
+file
+	FakeCtrl.h;
+

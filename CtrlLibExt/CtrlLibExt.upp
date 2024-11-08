@@ -4,5 +4,6 @@ uses
 
 file
 	CtrlLibExt.h,
+	CtrlLibExt.cpp,
 	bits/using_upp_namespace.h;
 
