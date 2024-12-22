@@ -1,0 +1,5 @@
+#ifndef _PopEasyTest_icpp_init_stub
+#define _PopEasyTest_icpp_init_stub
+#include "CtrlLib/init"
+#include "PopEasy/init"
+#endif

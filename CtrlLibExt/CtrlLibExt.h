@@ -92,4 +92,7 @@ public:
 
 END_NAMESPACE
 
+#include "GridEz/GridEz.h"
+#include "PopEz/PopEz.h"
+
 #endif

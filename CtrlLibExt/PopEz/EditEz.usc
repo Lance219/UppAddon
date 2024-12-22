@@ -1,0 +1,27 @@
+namespace lz;
+
+ctrl EditEz {
+	>EditField;
+	raw MaxLen;
+	Frame SetFrame = default;
+	bool  SetEditable = true @2 ? "Editable";
+	bool  WantFocus = true;
+	bool  DisplayAll = false;
+	bool  AlwaysDrop = false @1;
+	Text  Tip @2;
+//	Qtf   SetInfo @1 ? "Info of control" ;
+
+	Paint(w) {
+		r = GetRect();
+		DrawCtrlFrame(w, r, .SetFrame);
+		w.DrawRect(r, :SWhite);
+		n = r.bottom - r.top;
+		DrawDropButton(w, RectC(r.right - n, r.top, n, n));
+		text = (.NotNull ? "!" : "") + "EditEz";
+		if(.MaxLen != "")
+			text << "(" << .MaxLen << ")";
+		//PaintText(w, text);
+		w.DrawText(3, (GetSize().cy - GetTextSize("", Arial(10)).cy) / 2,
+			(.SetEditable ? "" : "R/O ") + "EditEz", Arial(10), :SMagenta);
+	}
+}

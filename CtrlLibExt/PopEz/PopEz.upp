@@ -1,0 +1,14 @@
+description "makes certain types of PopUp Ctrl really easy to implement\377";
+
+uses
+	GridEz;
+
+file
+	PopEz.h,
+	PopEz.cpp,
+	bits/EditKeyValue.h,
+	EditKeyValue.cpp,
+	src.tpp,
+	srcimp.tpp,
+	EditEz.usc;
+

@@ -1,0 +1,31 @@
+description "dynamic structure, can be used to store SQL query result.\377";
+
+uses
+	Core,
+	CoreExt;
+
+library(WIN32) libpq.lib;
+
+pkg_config(LINUX|FREEBSD|OPENBSD) libpq;
+
+file
+	DataSet.h,
+	DataSet.cpp,
+	bits/FieldValue.h,
+	bits/RecordSet.h,
+	bits/RecordSet.cpp,
+	bits/RecordSetReferenceIterator.hpp,
+	bits/RecordSetNField.hpp,
+	bits/RecordDef.h,
+	bits/RecordDef.cpp,
+	bits/FieldDef.h,
+	bits/Util.cpp,
+	bits/Util.h,
+	srcimp.tpp,
+	src.tpp,
+	sqlite.h,
+	sqlite.cpp,
+	libpqxx.h,
+	libpqxx.cpp,
+	sqlite\sqlite3.c;
+

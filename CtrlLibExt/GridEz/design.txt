@@ -1,0 +1,79 @@
+
+Full picture of data:
+
++------------+------------------------------------------------+-----------+
+|   A        |                B                               |     C     |
++------------+------------------------------------------------+-----------+
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|   D        |                  E                             |    F      |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
+|            |                                                |           |
++------------+------------------------------------------------+-----------+
+|   G        |                H                               |     I     |
++------------+------------------------------------------------+-----------+
+A grid is used to present a table like above. ABC are top fixed rows, GHI are bottom
+fixed rows, ADG are left fixed columns, CFI are right fixed columns. When mapping
+to a Grid, A,C,G, and I should remain unchanged from scrolling. D,F only affected by 
+vertical scrolling, while B and H only affected by horizontal scrolling.
+
++------------+------------------------+-----------+
+|   A        |         B'             |     C     |
++------------+------------------------+-----------+
+|            |                        |           |
+|            |                        |           |
+|            |                        |           |
+|   D'       |         E'             |    F'     |
+|            |                        |           |
+|            |                        |           |
++------------+------------------------+-----------+
+|   G        |         H'             |     I     |
++------------+------------------------+-----------+
+
+
+Wa+Wb+Wc=total width of full table. (Wa is part A's width, etc)
+Wa+Wb'+Wc=total width of grid Ctrl's client area
+Ha+Hd+Hg=total height of full table (Ha is part A's height)
+Ha+Hd'+Hg=total height of the grid Ctrl's client area.
+
+
+Rect coordinate mapping:
+use x coordinate as example.
+Relevant information.
+lcx: width of fixed left columns in the ctrl
+ccx: width of center scrollable columns in the ctrl
+rcx: width of fixed riht columns in the ctrl
+
+lcxf: width of fixed left columns in the full picture(hence the trailing f)
+ccxf: width of center scrollable columns in the full picture
+rcxf: width of fixed riht columns in the full picture
+
+lcx should be <= lcxf. in the case lcx<lcxf, ccx and rcx should all be zero.
+rcx should be <=rcxf. in the case rcx<rcxf, ccx should be zero.
+
+mapping (from full picture coordinate x to control client coordinate x'): 
+--------------+----------------------+--------------------+-------------------
+			  |  left fixed columns  |      center        |     right
+--------------+----------------------+--------------------+-------------------
+calculation   |	no change            |     - scrollX      | -ccxf+ccx-rcxf+rcx
+visible when  |	x'<=lcx              |  lcx<x'<=lcx+ccx   | lcx+ccx<x'
+--------------+----------------------+--------------------+-------------------  

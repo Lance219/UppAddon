@@ -1,0 +1,14 @@
+uses
+	Core,
+	GridEz,
+	plugin/gtest,
+	plugin/gtest;
+
+file
+	Test1.h,
+	Test1.cpp,
+	GridEzTest.cpp;
+
+mainconfig
+	"" = "";
+

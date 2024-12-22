@@ -1,0 +1,11 @@
+uses
+	CtrlLib,
+	PopEz;
+
+file
+	test.lay,
+	main.cpp;
+
+mainconfig
+	"" = "GUI";
+

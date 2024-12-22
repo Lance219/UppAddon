@@ -1,0 +1,13 @@
+uses
+	Core,
+	DataSet,
+	plugin/gtest;
+
+file
+	main.cpp,
+	DataSetTest.h,
+	DataSetTest.cpp;
+
+mainconfig
+	"" = "";
+

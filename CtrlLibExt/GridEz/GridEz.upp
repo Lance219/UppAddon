@@ -1,0 +1,27 @@
+uses
+	CtrlLibExt;
+
+file
+	design.txt,
+	GridEz.h,
+	GridEz.cpp,
+	bits/CachedData.h,
+	bits/CellFormat.h,
+	bits/CellFormat.cpp,
+	bits/CellFormatBitfields.h,
+	bits/ClientAreaManager.h,
+	bits/ClientAreaManager.cpp,
+	bits/Column.h,
+	bits/Column.cpp,
+	bits/GridCell.h,
+	bits/GridCell.cpp,
+	bits/JoinedCellManager.h,
+	bits/JoinedCellManager.cpp,
+	bits/Row.h,
+	bits/Row.cpp,
+	bits/UseCellFormatMethod.h,
+	GridEz.usc,
+	Misc readonly separator,
+	src.tpp,
+	srcimp.tpp;
+

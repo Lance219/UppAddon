@@ -5,5 +5,27 @@ uses
 file
 	CtrlLibExt.h,
 	CtrlLibExt.cpp,
-	bits/using_upp_namespace.h;
+	bits/using_upp_namespace.h,
+	GridEz/CachedData.h,
+	GridEz/GridEz.cpp,
+	GridEz/GridEz.h,
+	GridEz/bits/CachedData.h,
+	GridEz/bits/CellFormat.cpp,
+	GridEz/bits/CellFormat.h,
+	GridEz/bits/CellFormatBitfields.h,
+	GridEz/bits/ClientAreaManager.cpp,
+	GridEz/bits/ClientAreaManager.h,
+	GridEz/bits/Column.cpp,
+	GridEz/bits/Column.h,
+	GridEz/bits/GridCell.cpp,
+	GridEz/bits/GridCell.h,
+	GridEz/bits/JoinedCellManager.cpp,
+	GridEz/bits/JoinedCellManager.h,
+	GridEz/bits/Row.cpp,
+	GridEz/bits/Row.h,
+	GridEz/bits/UseCellFormatMethod.h,
+	PopEz/PopEz.h,
+	PopEz/PopEz.cpp,
+	PopEz/EditKeyValue.cpp,
+	PopEz/bits/EditKeyValue.h;
 

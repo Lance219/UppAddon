@@ -1,0 +1,10 @@
+LAYOUT(TestLayout, 676, 312)
+	ITEM(Upp::Label, dv___0, SetLabel(t_("ShipTo:")).RightPosZ(236, 48).BottomPosZ(8, 20))
+	ITEM(EditEz, shipto, RightPosZ(4, 224).BottomPosZ(8, 20))
+	ITEM(Upp::Label, dv___2, SetLabel(t_("Bill To:")).LeftPosZ(12, 48).TopPosZ(8, 20))
+	ITEM(EditEz, billto, LeftPosZ(60, 224).TopPosZ(8, 20))
+	ITEM(Upp::Label, dv___4, SetLabel(t_("Sold To:")).RightPosZ(236, 48).TopPosZ(8, 20))
+	ITEM(EditEz, soldto, RightPosZ(4, 224).TopPosZ(8, 20))
+	ITEM(Upp::RichTextCtrl, prompt, HSizePosZ(12, 8).VSizePosZ(36, 36))
+END_LAYOUT
+

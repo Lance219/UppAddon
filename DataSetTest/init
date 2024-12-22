@@ -1,0 +1,6 @@
+#ifndef _DataSetTest_icpp_init_stub
+#define _DataSetTest_icpp_init_stub
+#include "Core/init"
+#include "DataSet/init"
+#include "plugin/sqlite3/init"
+#endif
