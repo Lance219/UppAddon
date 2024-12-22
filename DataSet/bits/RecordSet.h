@@ -145,13 +145,6 @@ class RecordSet
 		Iterator end() const;
 		Iterator End() const;
 
-//  MSVC doesn't support initializer_list yet
-//	void Sort(std::initializer_list<int> list)
-//	{
-//		std::vector<int> v(list.begin(), list.end());
-//		Sort(v);
-//	}
-
 		void Sort ( const Vector<int>& fields );
 
 		RecordSet& Erase ( int i );
