@@ -50,7 +50,7 @@
 using namespace Upp;
 
 // for simplicity, convert numeric binary representation to double
-double numeric(int16 * p, int len)
+static double numeric(int16 * p, int len)
 {
 	int16 numdigit=ntohs(p[0]);
 	int16 weight=ntohs(p[1]);
@@ -74,28 +74,47 @@ namespace pg{
 
 Connection::Result Connection::Exec(const char * sql)const
 {
-	int retry=0;
-	PGresult * _res;
-
-_tryagain:
-    _res = PQexecParams(_conn, sql, 0, nullptr,nullptr,nullptr,nullptr,1);
-
-    ExecStatusType _stat=PQresultStatus(_res);
-    if(_stat == PGRES_BAD_RESPONSE || _stat== PGRES_FATAL_ERROR){
-		if( PQstatus(_conn)==CONNECTION_BAD && ++retry <7 ){
-			PQreset (_conn);
-			Sleep(300);
-			if(_res)
-				PQclear(_res);
-			goto _tryagain;
-		}
-        Exc e(PQerrorMessage(_conn));
-        if(_res)
+	int retry=7;
+//	PGresult * _res;
+	
+	do{
+		auto _res = PQexecParams(_conn, sql, 0, nullptr,nullptr,nullptr,nullptr,1);
+		if(auto _stat = PQresultStatus(_res);
+			_stat != PGRES_BAD_RESPONSE && _stat != PGRES_FATAL_ERROR
+		)
+			return _res;
+		
+		if(_res)
 			PQclear(_res);
-        throw e;
-    }
-    return _res;
-    
+
+		if( PQstatus(_conn) != CONNECTION_BAD)
+			break;
+		Sleep(300);
+		PQreset(_conn);
+	}while(--retry !=0 );
+		
+	throw Exc(PQerrorMessage(_conn));
+
+// original implementation, rewrite to get rid of 'goto'
+//_tryagain:
+//    _res = PQexecParams(_conn, sql, 0, nullptr,nullptr,nullptr,nullptr,1);
+//
+//    ExecStatusType _stat=PQresultStatus(_res);
+//    if(_stat == PGRES_BAD_RESPONSE || _stat== PGRES_FATAL_ERROR){
+//		if( PQstatus(_conn)==CONNECTION_BAD && ++retry <7 ){
+//			PQreset (_conn);
+//			Sleep(300);
+//			if(_res)
+//				PQclear(_res);
+//			goto _tryagain;
+//		}
+//        Exc e(PQerrorMessage(_conn));
+//        if(_res)
+//			PQclear(_res);
+//        throw e;
+//    }
+//    return _res;
+//    
 }
 
 bool Connection::TryOpen(const char * sql, RecordSet& r)const
