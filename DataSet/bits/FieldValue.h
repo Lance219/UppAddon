@@ -89,12 +89,6 @@ public:
 		return Get ( t );
 	}
 
-//	template <class T>
-//	operator T(){
-//		typename lz::Map<T>::type t;
-//		return const_cast<const FieldValue*>(this)->Get(t);
-//	}
-
 	template <class T>
 	typename Type2Id<lz::TrimIntegral<T>>::return_type
 	operator= ( const T& rhs )
@@ -116,8 +110,6 @@ public:
 	{
 		return *fldDef;
 	}
-
-	// naviagtion next field/next row, etc
 
 	inline char * location()
 	{

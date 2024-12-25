@@ -1,8 +1,8 @@
 uses
 	Core,
-	GridEz,
 	plugin/gtest,
-	plugin/gtest;
+	plugin/gtest,
+	CtrlLibExt;
 
 file
 	Test1.h,

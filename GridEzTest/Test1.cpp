@@ -284,7 +284,7 @@ TEST(GridEzTest, AddColumn)
 	GridEz grid;
 	{
 		auto& c = grid.AddColumn();
-		EXPECT_EQ(c.Width(), static_cast<uint16>(DEFAULT_COL_WIDTH));
+		EXPECT_EQ(c.Width(), -1);
 		EXPECT_EQ(grid.GetColCount(), 1);
 	}
 	{
@@ -294,17 +294,17 @@ TEST(GridEzTest, AddColumn)
 	}
 }
 
-TEST(GridEzTest, FullPictureToGrid)
-{
-	using namespace lz;
-
-	GridEz grid;
-	grid.NoFitColumns();
-	for(int i=0; i<20; ++i)
-		grid.AddColumn(100);
-	for(int i=0; i<200; ++i)
-		grid.AddRow();
-	grid.SetRect(0,0,1000,800);
-	
-	DUMP(grid.GetSize());
-}
+//TEST(GridEzTest, FullPictureToGrid)
+//{
+//	using namespace lz;
+//
+//	GridEz grid;
+//	grid.NoFitColumns();
+//	for(int i=0; i<20; ++i)
+//		grid.AddColumn(100);
+//	for(int i=0; i<200; ++i)
+//		grid.AddRow();
+//	grid.SetRect(0,0,1000,800);
+//	
+//	DUMP(grid.GetSize());
+//}

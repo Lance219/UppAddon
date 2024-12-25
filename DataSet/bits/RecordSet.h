@@ -1,12 +1,5 @@
 
-//NAMESPACE_UPP
-
-//class RecordSet;
-//
-//class FieldDef;
-
 #include "FieldValue.h"
-
 
 class RecordSet
 {
