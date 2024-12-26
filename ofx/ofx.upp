@@ -1,0 +1,15 @@
+description "Open Financial Exchange API\377";
+
+uses
+	plugin/gtest,
+	plugin/gtest,
+	DataSet;
+
+file
+	ofx.h,
+	src/parser.h,
+	src/tags.h,
+	src/parser.cc,
+	README.md,
+	LICENSE.md;
+

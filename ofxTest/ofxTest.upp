@@ -1,0 +1,15 @@
+description "Test for ofx (open financial exchange) library\377";
+
+uses
+	Core,
+	plugin/gtest,
+	ofx;
+
+file
+	test.cc,
+	test.h,
+	ofxTest.cpp;
+
+mainconfig
+	"" = "";
+
