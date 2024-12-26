@@ -1,6 +1,6 @@
 #include "../DataSet.h"
 
-NAMESPACE_UPP
+BEGIN_NAMESPACE_LZ
 
 RecordDef& RecordDef::AppendRecordDef ( const RecordDef& rhs )
 {
@@ -20,7 +20,7 @@ int RecordDef::GetFieldIndex ( const char * fldName ) const
 {
 	for ( int i = 0; i < fields.GetCount(); ++i )
 	{
-		if ( stricmp ( GetField ( i ).name, fldName ) == 0 )
+		if ( _stricmp ( GetField ( i ).name, fldName ) == 0 )
 			return i;
 	}
 
@@ -126,4 +126,4 @@ String RecordDef::ToString() const
 	return s;
 }
 
-END_UPP_NAMESPACE
+END_NAMESPACE

@@ -15,10 +15,6 @@ Upp::String sql_quote ( const char * s );
 Upp::String sql_like ( const char *s );
 Upp::String SqlQuoteIdentifier ( const char *s );
 
-
-
-using namespace Upp;
-
 class bit;
 // blob is moveable, but no need to let the world know.
 //

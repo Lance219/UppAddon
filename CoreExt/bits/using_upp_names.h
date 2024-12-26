@@ -1,5 +1,7 @@
-using Upp::String, Upp::WString, Upp::Point, Upp::uint16, Upp::dword, Upp::uint8, Upp::byte,
-	Upp::int16, Upp::int32,
+using Upp::String, Upp::WString, Upp::Point,
+	Upp::uint16, Upp::dword, Upp::uint8, Upp::byte,
+	Upp::int8, Upp::int16, Upp::int32,
+	Upp::Date, Upp::Time,
 	Upp::Vector, Upp::Rect, Upp::Size,
 	Upp::Color, Upp::Value, Upp::Null, Upp::IsNull,
 	Upp::Alignment, Upp::ALIGN_BOTTOM, Upp::ALIGN_CENTER,
@@ -9,4 +11,5 @@ using Upp::String, Upp::WString, Upp::Point, Upp::uint16, Upp::dword, Upp::uint8
 	Upp::Single, Upp::Gate1, Upp::GateN, Upp::Event,
 	Upp::Swap, Upp::BeepError, Upp::Panic,
 	Upp::Pte, Upp::Rect16,
-	Upp::wchar, Upp::max, Upp::min, Upp::Buffer;
+	Upp::wchar, Upp::max, Upp::min, Upp::Buffer,
+	Upp::Array;

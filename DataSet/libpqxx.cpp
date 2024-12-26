@@ -67,7 +67,8 @@ static double numeric(int16* p, int len)
 	return v;
 }
 
-namespace pg {
+BEGIN_NAMESPACE_LZ
+inline namespace pg{
 
 Connection::Result Connection::Exec(const char* sql) const
 {
@@ -207,7 +208,7 @@ bool Connection::TableExists(const char* tblename)
 	return Open(sql)(0).Get<bit>();
 }
 
-Upp::RecordSet Connection::ListTables() const
+RecordSet Connection::ListTables() const
 {
 	return Open("select relname from pg_class where relkind='r' and relowner<>10");
 }
@@ -741,4 +742,5 @@ RecordSet Connection::RecordSetFromTable(const char* tbl)
 	return Exec(sql);
 }
 
-} // namespace pg
+}
+END_NAMESPACE

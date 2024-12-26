@@ -4,7 +4,8 @@
 #include "sqlite/sqlite3.h"
 #include <DataSet/DataSet.h>
 
-namespace sqlite{
+BEGIN_NAMESPACE_LZ
+inline namespace sqlite{
 	
 class Connection
 {
@@ -28,7 +29,7 @@ class Connection
 			return *this;
 		}
 
-		Upp::RecordSet Open ( const char *sql )const;
+		RecordSet Open ( const char *sql )const;
 
 
 		int ExecSQL ( const char * sql )const;
@@ -56,6 +57,7 @@ class Connection
 		sqlite3 * _db;
 };
 
-}//eons
+}
+END_NAMESPACE
 
 #endif

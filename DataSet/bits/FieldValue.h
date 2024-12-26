@@ -78,7 +78,7 @@ public:
 	void SetBit ( bool v )
 	{
 		ASSERT ( fldDef->tid == FT_BIT );
-		::SetBit ( base, fldDef->start, v );
+		lz::SetBit ( base, fldDef->start, v );
 		MarkAsSet();
 	}
 

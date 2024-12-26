@@ -1,6 +1,6 @@
 #include "../DataSet.h"
 
-NAMESPACE_UPP
+BEGIN_NAMESPACE_LZ
 
 #define RECORDSET_SORT
 #ifdef RECORDSET_SORT
@@ -476,7 +476,7 @@ static void * SetToInt8 ( void *dest, int id, const void * data )
 //		break;
 
 		case FT_PCHAR:
-			v = ScanInt64 ( ( const char* ) data );
+			v = Upp::ScanInt64 ( ( const char* ) data );
 			break; // char *
 
 		case FT_VALUE:
@@ -753,12 +753,12 @@ static void * SetToTime ( void * dest, int id, const void* data )
 
 		case FT_STRING:
 			if ( StrToTime ( t, ( * ( const String* ) data ) ) == NULL )
-				throw Exc ( "Invalid Time String" );
+				throw Upp::Exc ("Invalid Time String");
 
 			break;
 
 		default:
-			throw Exc ( "SetToTime from wrong data" );
+			throw Upp::Exc ( "SetToTime from wrong data" );
 	}
 
 	return dest;
@@ -864,7 +864,7 @@ void * FieldDef::FieldValue::DoGet ( void * dest, FieldTypeId did ) const
 void FieldDef::FieldValue::PODSet ( const void* data )
 {
 	FieldTypeId id = fldDef->tid;
-	memcpy ( location(), data, ::TypeSize ( id ) );
+	memcpy ( location(), data, lz::TypeSize ( id ) );
 	MarkAsSet();
 
 }
@@ -901,7 +901,7 @@ void FieldDef::FieldValue::DoSet ( const void * data, FieldTypeId inTid )
 	// special treatment for field of type FT_BIT
 
 	if ( isbit )
-		::SetBit ( const_cast<void*> ( base ), fldDef->start, dummy );
+		lz::SetBit ( const_cast<void*> ( base ), fldDef->start, dummy );
 
 	MarkAsSet();
 }
@@ -1280,5 +1280,5 @@ void RecordSet::DoSwapRecord ( RecordSet::Iterator i, RecordSet::Iterator j )
 //}
 //
 
-END_UPP_NAMESPACE
+END_NAMESPACE
 

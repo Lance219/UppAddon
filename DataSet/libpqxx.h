@@ -19,7 +19,8 @@ typedef unsigned int Oid;
 struct PGconnection;
 }
 
-namespace pg {
+BEGIN_NAMESPACE_LZ
+inline namespace pg{
 
 /*  wraps PGconn
  *
@@ -98,10 +99,10 @@ private:
 		}
 
 		// convert to RecordSet;
-		operator Upp::RecordSet() const;
+		operator RecordSet() const;
 		// operator RecordSet(){ return RecordSet(const_cast<Result&>(*this));}
 
-		void AssignTo(Upp::RecordSet& rs) const;
+		void AssignTo(RecordSet& rs) const;
 
 		PGresult* GetRes() { return _res; }
 
@@ -109,7 +110,7 @@ private:
 
 	private:
 		PGresult* _res;
-		Upp::String errMsg;
+		String errMsg;
 	};
 
 public:
@@ -138,7 +139,7 @@ public:
 		return *this;
 	}
 
-	Upp::RecordSet Open(const char* sql) const
+	RecordSet Open(const char* sql) const
 #ifdef _DEBUG
 		;
 #else
@@ -156,7 +157,7 @@ public:
 	}
 #endif
 
-	bool TryOpen(const char* sql, Upp::RecordSet& r) const;
+	bool TryOpen(const char* sql, RecordSet& r) const;
 	bool TryExecSQL(const char* sql, int& rowsAffected);
 
 	const char* ErrorMessage() const;
@@ -201,14 +202,14 @@ public:
 	void Cancel();
 	// void ExecuteAsyn(const char * cmd,
 
-	bool Save(Upp::RecordSet& rs, const char* tbl, int pkey_index = 0);
-	Upp::RecordSet RecordSetFromTable(const char* tbl);
+	bool Save(RecordSet& rs, const char* tbl, int pkey_index = 0);
+	RecordSet RecordSetFromTable(const char* tbl);
 
-	bool Save(Upp::DataSet& ds);
+	bool Save(DataSet& ds);
 
 	bool TableExists(const char* tblename);
 	bool TableHasColumn(const char* tblname, const char* colname);
-	Upp::RecordSet ListTables() const;
+	RecordSet ListTables() const;
 	Upp::String ExportTableDefs();
 	Upp::String ExportTableDef(Upp::String tble);
 
@@ -221,6 +222,7 @@ private:
 	void Exec(const char* sql, Result& r) const { r = Exec(sql); }
 };
 
-} // namespace pg
+}
+END_NAMESPACE
 
 #endif

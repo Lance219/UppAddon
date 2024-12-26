@@ -3,7 +3,8 @@
 
 using namespace Upp;
 
-namespace sqlite{
+BEGIN_NAMESPACE_LZ
+inline namespace sqlite{
 	
 Connection::Connection ( const char * file )
 {
@@ -36,10 +37,10 @@ int Connection::ExecSQL ( const char * sql )const
 	return 0; // number of records affected??
 }
 
-Upp::RecordSet Connection::Open ( const char *sql )const
+RecordSet Connection::Open ( const char *sql )const
 {
 	sqlite3_stmt *stmt;
-	Upp::RecordSet r;
+	RecordSet r;
 	int code;
 	
 	if (_db == nullptr || sql==nullptr)
@@ -86,7 +87,7 @@ Upp::RecordSet Connection::Open ( const char *sql )const
 				}
 				r.AddField(sqlite3_column_name(stmt,i),tid);
 			}
-			const_cast<Upp::RecordDef&>(r.GetRecordDef()).PhysicalLayout();
+			const_cast<RecordDef&>(r.GetRecordDef()).PhysicalLayout();
 			inited = true;
 		}
 
@@ -140,5 +141,5 @@ void Connection::RollBack()
 }
 
 
-
-}//eons
+}
+END_NAMESPACE

@@ -1,6 +1,7 @@
 #include "../DataSet.h"
 #include <algorithm>
 
+BEGIN_NAMESPACE_LZ
 
 int TypeAlign(FieldTypeId fid)
 {
@@ -58,17 +59,17 @@ bool ParseBool(const char * input, bool& output)
 		break;
 	case 't':
 		value=true;
-		if(stricmp(input, "true")==0)
+		if(_stricmp(input, "true")==0)
 			input+=3;
 		break;
 	case 'f':
 		value=false;
-		if(stricmp(input, "false")==0)
+		if(_stricmp(input, "false")==0)
 			input+=4;
 		break;
 	case 'y':
 		value=true;
-		if(stricmp(input, "yes")==0)
+		if(_stricmp(input, "yes")==0)
 			input+=2;
 		break;
 	case 'n':
@@ -454,9 +455,9 @@ String SqlQuoteIdentifier(const char *s)
 		const char**q=std::lower_bound(
 			keywords,keywords+n, s,
 			[](const char*a, const char*b)
-				{ return stricmp(a,b)<0; }
+				{ return _stricmp(a,b)<0; }
 		);
-		if(q<keywords+n && stricmp(*q,s)==0 )
+		if(q<keywords+n && _stricmp(*q,s)==0 )
 			normal=false;
 	}
 	String t;
@@ -474,3 +475,5 @@ String SqlQuoteIdentifier(const char *s)
 		t=s;
 	return t;
 }
+
+END_NAMESPACE

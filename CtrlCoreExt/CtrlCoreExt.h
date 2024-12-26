@@ -17,6 +17,9 @@ namespace lz{
 template <class T>
 concept CtrlClass = std::derived_from<T, Ctrl>;
 
+// we aim to make use of the padding in Upp::Ctrl
+// on 64bit CPU (which is mainstream atm)
+//
 struct CtrlHack : public Pte<CtrlHack>
 {
 	typedef CtrlHack Ctrl;
@@ -71,6 +74,7 @@ struct CtrlHack : public Pte<CtrlHack>
 	union{
 		int32 padding;
 		struct{
+			byte         skipped[3];
 			bool		 owned:1;           //33
 		};
 	};

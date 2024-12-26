@@ -236,8 +236,8 @@ class RecordSet
 			{
 				return this->operator() ( i );
 			}else{
-				std::string msg;
-				msg << "{"<<fieldName<<"} not present in the RecordDef";
+				char msg[100];
+				snprintf(msg, sizeof msg,"{%s} not present in the RecordDef", fieldName);
 				throw std::runtime_error(msg);
 			}
 		}
@@ -466,11 +466,11 @@ inline	const typename Return<T>::type FieldDef::FieldValue::Get() const
 	return BitRet<T>::cast ( DoGet() );
 }
 
-template <>
-inline void IterSwap<RecordSet::Iterator> ( RecordSet::Iterator i, RecordSet::Iterator j )
-{
-	RecordSet::DoSwapRecord ( i, j );
-}
+//template <>
+//inline void Upp::IterSwap<RecordSet::Iterator> ( RecordSet::Iterator i, RecordSet::Iterator j )
+//{
+//	RecordSet::DoSwapRecord ( i, j );
+//}
 
 Upp::String SqlFieldValue (FieldDef::FieldValue v );
 

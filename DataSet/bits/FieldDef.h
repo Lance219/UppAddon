@@ -62,12 +62,12 @@ class FieldDef
 
 		size_t TypeAlign() const
 		{
-			return ::TypeAlign ( tid );
+			return lz::TypeAlign ( tid );
 		}
 
 		size_t TypeSize() const
 		{
-			return ::TypeSize ( tid );
+			return lz::TypeSize ( tid );
 		}
 
 		unsigned GetStart() const
@@ -89,7 +89,7 @@ class FieldDef
 
 		bool FieldIsNull ( const void * base ) const
 		{
-			return /*IsNullable() &&*/ !::GetBit ( base, nullbit );
+			return /*IsNullable() &&*/ !lz::GetBit ( base, nullbit );
 		}
 
 		void MarkAsSet ( void * base )noexcept

@@ -3,6 +3,7 @@
 #include <plugin/gtest/gtest.h>
 #include "DataSetTest.h"
 
+using namespace lz;
 using namespace Upp;
 
 void DataSetTest::SetUp()
