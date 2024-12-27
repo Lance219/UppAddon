@@ -1,4 +1,4 @@
-#include "GridEz.h"
+#include "../CtrlLibExt.h"
 #define LTIMING RTIMING
 
 #include <algorithm>
@@ -122,8 +122,8 @@ void GridEz::Paint(Draw& w)
 			di.Compose(row.GetFormat(di.col), col, format);
 
 			if(IsCurRow(di.row)) {
-				di.Ink(HasFocus() ? SColorHighlightText() : SBlack());
-				di.Paper(HasFocus() ? SColorHighlight() : Blend(SColorDisabled, SColorPaper));
+				di.Ink(HasFocus()||IsPaintAsFocused(*this) ? SColorHighlightText() : SBlack());
+				di.Paper(HasFocus()||IsPaintAsFocused(*this) ? SColorHighlight() : Blend(SColorDisabled, SColorPaper));
 			}
 			else if(IsFixedRow(di.row) || IsFixedCol(di.col))
 				di.Paper(SColorFace());

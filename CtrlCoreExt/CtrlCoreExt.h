@@ -74,8 +74,9 @@ struct CtrlHack : public Pte<CtrlHack>
 	union{
 		int32 padding;
 		struct{
-			byte         skipped[3];
-			bool		 owned:1;           //33
+			byte			skipped[3];
+			bool			owned:1;           //33
+			bool			paintAsFocused:1;
 		};
 	};
 	int32 GetReserved()const{ return padding; }
@@ -115,6 +116,15 @@ struct CtrlHack : public Pte<CtrlHack>
 		return owned;
 	}
 
+	void		SetPaintAsFocused( bool b = true)
+	{
+		paintAsFocused = b;
+	}
+	
+	bool		IsPaintAsFocused()const
+	{
+		return paintAsFocused;
+	}
 	// the hack is very likely to work but is not fool-proof.
 	//
 	// changes in Upp::Ctrl class definition may break it (not very likely though).
@@ -190,6 +200,33 @@ inline bool IsOwned ( CtrlClass auto& ctrl )
 inline bool IsOwned ( CtrlClass auto* ctrl )
 {
 	return IsOwned ( *ctrl );
+}
+
+inline auto& SetPaintAsFocused ( CtrlClass auto& ctrl, bool paf = true )
+{
+#ifdef _DEBUG
+	static CtrlHack h;
+#endif
+
+	reinterpret_cast<CtrlHack*> ( &ctrl )->SetPaintAsFocused(paf);
+	return ctrl;
+}
+
+//template <class T>
+inline auto SetPaintAsFocused ( CtrlClass auto* ctrl, bool paf = true )
+{
+	return &SetPaintAsFocused ( *ctrl, paf );
+}
+
+
+inline bool IsPaintAsFocused ( CtrlClass auto& ctrl )
+{
+	return reinterpret_cast<CtrlHack*> ( &ctrl )->IsPaintAsFocused();
+}
+
+inline bool IsPaintAsFocused ( CtrlClass auto* ctrl )
+{
+	return reinterpret_cast<CtrlHack*> ( ctrl )->IsPaintAsFocused();
 }
 
 #ifdef CPU_64

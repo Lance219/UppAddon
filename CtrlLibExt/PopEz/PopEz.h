@@ -1,7 +1,7 @@
 #ifndef _PopEz_PopEz_h_
 #define _PopEz_PopEz_h_
 
-//#include <CtrlLibExt/CtrlLibExt.h>
+#include <CtrlLibExt/CtrlLibExt.h>
 //#include <GridEz/GridEz.h>
 #include "bits/EditKeyValue.h"
 
@@ -13,7 +13,7 @@ struct PopSlave
 {
 	PopSlave() = default;
 
-	enum class HintReason : typename lz::IntOfSize<sizeof(bool)>
+	enum class HintReason : IntOfSize<sizeof(bool)>
 	{
 		Show,
 		Changed
@@ -150,7 +150,7 @@ protected:
 
 };
 
-class ListPopBase: public PopSlave, public GridEz
+class ListPopBase: public PopSlave, public lz::GridEz
 {
 public:
 	ListPopBase();

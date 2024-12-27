@@ -19,6 +19,8 @@ void PopSlave::PopUp(Rect& r)
 void PopSlave::PopUp()
 {
 	Ctrl& c = *GetCtrl();
+	
+	SetPaintAsFocused(c);
 
 	if(!c.IsOpen() && GetMainEx() != NULL) {
 		c.PopUp(&GetMainEx()->GetMain(), true, false, true, true);
@@ -376,8 +378,8 @@ TreeListPopUp::TreeListPopUp()
 	tree.NoWantFocus();
 	list.NoWantFocus();
 	list.WhenRowColor = [](int r, Color& ink, Color& paper, int) {
-		if(r % 3 == 2)
-			paper = Blend(Cyan(), White());
+		if(r % 4 == 3)
+			paper = Gray();//Blend(Cyan(), White());
 	};
 
 	RefreshTree();
@@ -389,6 +391,7 @@ TreeListPopUp::TreeListPopUp()
 	tree.WhenLeftClick = [=, this] { TreeWhenLeft(); };
 
 	SetViewStyle(VS_TreeList);
+	SetPaintAsFocused(list);
 }
 
 Size TreeListPopUp::GetPreferredSize() const
@@ -498,7 +501,16 @@ int TreeListPopUp::GetKeyColumn() const { return key_col; }
 
 void TreeListPopUp::FakeShiftFocus()
 {
-	fake_focus_ctrl = fake_focus_ctrl == &tree ? (Ctrl*)&list : (Ctrl*)&tree;
+	if( fake_focus_ctrl == &tree)
+	{
+		fake_focus_ctrl = &list;
+		SetPaintAsFocused(list);
+	}else{
+		fake_focus_ctrl = &tree;
+		SetPaintAsFocused(tree);
+	}
+//		fake_focus_ctrl = fake_focus_ctrl == &tree ? (Ctrl*)&list : (Ctrl*)&tree;
+	
 }
 
 void TreeListPopUp::TreeWhenLeft() { fake_focus_ctrl = &tree; }

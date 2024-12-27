@@ -1,14 +1,14 @@
 #ifndef _PopEasy_EditKeyValue_h_
 #define _PopEasy_EditKeyValue_h_
 
-#include <CtrlCoreExt/CtrlCoreExt.h>
+#include <CtrlLibExt/CtrlLibExt.h>
 
 BEGIN_NAMESPACE_LZ
+//
+//using Upp::EditField, Upp::Convert, Upp::Value, Upp::Point;
+//using Upp::dword, Upp::WString;
 
-using Upp::EditField, Upp::Convert, Upp::Value, Upp::Point;
-using Upp::dword, Upp::WString;
-
-class EditKeyValue : public EditField, public Convert
+class EditKeyValue : public EditField, public Upp::Convert
 {
 public:
 

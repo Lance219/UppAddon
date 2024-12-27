@@ -2,7 +2,7 @@
 #define _GridEz_GridEz_h
 
 #include <type_traits>
-#include <CtrlLibExt/CtrlLibExt.h>
+//#include <CtrlLibExt/CtrlLibExt.h>
 
 BEGIN_NAMESPACE_LZ
 
@@ -442,8 +442,8 @@ class GridEz : public Ctrl
 		bool fixedcolwantcursor :1;
 		bool curcellvisualclue  :1; // not used yet?
 		bool autohidesbs		:1;
-		bool fitcolumns			:1;
 		bool fitrows			:1;
+		bool fitcolumns			:1;
 		bool colinnaturalorder  :1;
 		bool rowinnaturalorder  :1;
 		bool colcanresize		:1;
