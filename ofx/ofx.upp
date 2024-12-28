@@ -8,8 +8,8 @@ uses
 file
 	ofx.h,
 	src/parser.h,
-	src/tags.h,
 	src/parser.cc,
+	src/tags.inc,
 	README.md,
 	LICENSE.md;
 

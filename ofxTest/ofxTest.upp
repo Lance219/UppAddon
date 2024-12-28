@@ -8,7 +8,8 @@ uses
 file
 	test.cc,
 	test.h,
-	ofxTest.cpp;
+	ofxTest.cpp,
+	srcimp.tpp;
 
 mainconfig
 	"" = "";
