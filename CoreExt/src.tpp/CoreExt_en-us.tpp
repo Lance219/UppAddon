@@ -23,8 +23,10 @@ topic "";
 [s3; &]
 [s0;%% &]
 [s4; &]
-[s5;:lz`:`:Off: [* tribool]&]
-[s2;%%  A truely nullable boolean type.&]
+[s4; &]
+[s5;:lz`:`:tribool: [@(0.0.255) enum] [* tribool] [@(0.0.255) :] [@(0.0.255) char]&]
+[s2;%%  A truely nullable boolean type. .&]
+[s3; &]
 [s3; &]
 [s1;:lz`:`:StrLiteral: [*3 StrLiteral]&]
 [s2;%% StrLiteral is used to separate a const char `* from a compile 

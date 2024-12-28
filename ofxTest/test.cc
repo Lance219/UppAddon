@@ -62,10 +62,11 @@ OLDFILEUID:NONE
 NEWFILEUID:NONE)";
 	std::string value;
 	BuffInput in(buff, sizeof(buff)-1);
-	DataSet ds;
-	EXPECT_TRUE(_.ReadHeader(in, ds));
-	EXPECT_TRUE(ds.Contains("header"));
-	auto& hdr = ds["header"];
+	Parser::Info info;
+	//DataSet ds;
+	EXPECT_TRUE(_.ReadHeader(in, info));
+	EXPECT_TRUE(info.ds.Contains("header"));
+	auto& hdr = info.ds["header"];
 	EXPECT_EQ(hdr["OFXHEADER"].Get<Upp::String>(), "100");
 	EXPECT_EQ(hdr["DATA"].Get<Upp::String>(), "OFXSGML");
 	EXPECT_EQ(hdr["VERSION"].Get<Upp::String>(), "102");

@@ -4,25 +4,44 @@ class Parser {
 public:
 	class Input {
 	public:
+		int skip_spaces(){
+			int c;
+			while( isspace( (c=peek())))
+				advance();
+			return c;
+		}
+		
+		int skip_blanks(){
+			int c;
+			while( isblank(c=peek()))
+				advance();
+			return c;
+		}
 		virtual int peek() const = 0;
 		virtual int read() = 0;
 		virtual void advance() = 0;
 		//virtual void unget(int ch)=0;
 		virtual ~Input(){}
 	};
-	
-//	enum class TokenType: char{
-//		LessSign, // when reading header, got a <
-//		Error,	// unknown or unexpected keys/tags
-//		HeaderKey,
-//		OpenTag,
-//		CloseTag,
-//	};
-//	struct Token{
-//		TokenType type;
-//		int		   id;
-//	};
 
+	// not a very descriptive name, but for now
+	struct Info{
+		void Error(const char * msg)
+		{
+			static bool init;
+			RecordSet *p = nullptr, &error=*p;
+			if(!init){
+				p = &ds.Add("errors");
+				error.AddField("msg", FT_STRING).PhysicalLayout();
+				init = true;
+			}else
+				p = &ds["errors"];
+			error.Append();
+			error(0)=msg;
+		}
+		DataSet ds;
+		std::vector<int> tag_stack;
+	};
 public:
 	bool Parse(Input& in);
 	bool Parse(const char * file);
@@ -35,8 +54,9 @@ public:
 
 private:
 //	Token HeaderReadKeyValue(Input& in, std::string& value);
-	bool ReadHeader(Input& in, DataSet& ds);
+	bool ReadHeader(Input& in, Info& info);
 	bool ReadKeyValue(Input& in, int key_index, std::string& value);
+	bool ParseSGML(Input& in, Info& info);
 	
 	constexpr static const char * keys[]={// in ascending order
 		"CHARSET",
