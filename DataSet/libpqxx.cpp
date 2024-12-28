@@ -11,8 +11,8 @@ extern "C" PGresult* PQexecParams(PGconn* conn, const char* command, int nParams
  *	Read/write mode flags for inversion (large object) calls
  */
 
-#define INV_WRITE 0x00020000
-#define INV_READ 0x00040000
+constexpr static int INV_WRITE= 0x00020000;
+constexpr static int INV_READ= 0x00040000;
 
 #include "libpqxx.h"
 
@@ -464,7 +464,7 @@ void Connection::Result::AssignTo(RecordSet& rs) const
 				// 17;"bytea"
 				// 18;"char"
 				// 19;"name"
-				case 20: //;"int8" 64bit integer
+				case 20: // 64bit integer
 					rs(c).As<int64>() = ntohll(*(int64*)s);
 					break;
 				case 21: //;"int2"

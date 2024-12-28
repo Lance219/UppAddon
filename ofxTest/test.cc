@@ -15,8 +15,8 @@ TEST(ParserTest, TagsAndKeys)
 
 TEST(ParserTest, ReadKeyValue)
 {
-	lz::Parser _;
-	char buff[]=R"(OFXHEADER:100
+	char buff[]=
+R"(OFXHEADER:100
 DATA:OFXSGML
 VERSION:102
 SECURITY:NONE
@@ -25,6 +25,8 @@ CHARSET:1252
 COMPRESSION:NONE
 OLDFILEUID:NONE
 NEWFILEUID:NONE)";
+
+	lz::Parser _;
 	std::string value;
 	BuffInput in(buff, sizeof(buff)-1);
 	_.ReadKeyValue(in, _.IndexOfKey("OFXHEADER"), value);
@@ -50,8 +52,8 @@ NEWFILEUID:NONE)";
 
 TEST(ParserTest, ReadHeader)
 {
-	lz::Parser _;
-	char buff[]=R"(OFXHEADER:100
+	char buff[]=
+R"(OFXHEADER:100
 DATA:OFXSGML
 VERSION:102
 SECURITY:NONE
@@ -60,6 +62,8 @@ CHARSET:1252
 COMPRESSION:NONE
 OLDFILEUID:NONE
 NEWFILEUID:NONE)";
+
+	lz::Parser _;
 	std::string value;
 	BuffInput in(buff, sizeof(buff)-1);
 	Parser::Info info;
@@ -77,7 +81,5 @@ NEWFILEUID:NONE)";
 	EXPECT_EQ(hdr["OLDFILEUID"].Get<Upp::String>(),"NONE");
 	EXPECT_EQ(hdr["NEWFILEUID"].Get<Upp::String>(),"NONE");
 }
-
-
 
 }
