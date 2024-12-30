@@ -3,13 +3,16 @@ description "Test for ofx (open financial exchange) library\377";
 uses
 	Core,
 	plugin/gtest,
-	ofx;
+	ofx,
+	debug,
+	debug;
 
 file
 	test.cc,
 	test.h,
 	ofxTest.cpp,
-	srcimp.tpp;
+	srcimp.tpp,
+	ofxTest.log;
 
 mainconfig
 	"" = "";

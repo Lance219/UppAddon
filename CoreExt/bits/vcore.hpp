@@ -39,9 +39,9 @@ memcpy_record ( void * dest, const void * src, size_t count )
 // a workhourse for vector where typename T is not relevant
 //
 // we aim to put all the more labour intensive work in this helper class,
-// so that, for example, vector<long>, vector<unsigned long>, vector<long long>,
+// so that, for example, vector<long long>,
 // vector<unsigned long long>, vector<double>, vector<T*>, and other builtin/user
-// defined class of size 8 bytes will share the same vcore. In `vector`,
+// defined classes of size 8 bytes will share the same vcore. In `vector`,
 // most functions should be inline'd and deliver work load to its vcore object.
 //
 // The purpose of this design is to minimize executable size.

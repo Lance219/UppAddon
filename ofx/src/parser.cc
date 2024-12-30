@@ -1,42 +1,315 @@
 #include "../ofx.h"
+#include <cassert>
 
 namespace lz{
 
-bool Parser::Parse(Parser::Input& in)
+bool Parser::Parse(Parser::Input& in, Parser::Info& info)
 {
-	Info info;
 	if(!ReadHeader(in, info))
 	{
-		std::string s("Error reading ofx header:...");
+		std::string s;
 
 		int c;
 		int count=10;
-		while( --count!=0 && (c=in.peek())!=EOF )
+		while( --count!=0 && (c=in.read())!=EOF )
 		{
 			s += (char)c;
 		}
-		info.Error(s.c_str());
+		info.Error("Error reading ofx header:...'{}'", s);
 		return false;
 	}
 	if(info.ds.Contains("header"))
 		return ParseSGML(in, info);
 	
-	return true;
+	return false;
 }
 
-bool Parser::ParseSGML(Input& in, Info& info)
+// attempt to read pass the expected tag 'tag', if input has
+// something else, the Input 'in' will be significantly restored to
+// the state before the failed read.
+//
+// for example, if input 
+// '\n  <OFX>...'
+// is passed to this function with 'tag'="STMTTRN"
+// false will be returned, input will be
+// '<OFX>...'
+// i.e. the skipped whitespace is not restored, otherwise the input
+// can be used to test for another tag, etc.
+//
+bool Parser::ReadTag(Input& in, Info& info, const char * tag)
 {
-	std::vector<int> tags;
-	int c;
+	assert(IndexOfTag(tag)!=-1);
+	if(in.skip_spaces()!='<')
+	{
+		return false;
+	}
+	auto pos = in.tellg();
+	in.advance(); // read pass '<'
+	int i=0, c;
+	auto taglen = std::string_view(tag).length();
+	while( i<taglen && (c=in.peek())==tag[i])
+	{
+		++i;
+		in.advance();
+	}
+	if(i==taglen && in.read() == '>')
+		return true;
+	
+	in.seekg(pos);
+	return false;
+}
+
+// return -1 on invalid tag
+//        [0, tag_count), an open tag with return value as the index
+//        other negative value 'r', an close tag with '-r+2' as the index
+int  Parser::ReadTag(Input& in, Info& info)
+{
+	std::string tag;
+	bool close = false;
 	
 	if(in.skip_spaces()!='<')
 	{
-		info.Error("parsing input failure: expecting <ofx> tag");
-		return false;
+		return -1;
 	}
 	in.advance(); // read pass '<'
+	if(in.peek()=='/'){
+		close = true;
+		in.advance();
+	}
 	
-	return true;
+	int c;
+	while( (c=in.read())!=EOF && c!='>' && !isspace(c) )
+	{
+		tag += (char)c;
+	}
+	if(c!='>')
+		return -1;
+	
+	int index = IndexOfTag(tag.c_str());
+	return index == -1 ? -1 : close ? -index-2 : index;
+}
+
+// for now, we skip this segment. 
+// DTSERVER, FID may be interesting to have
+//
+bool Parser::ReadSignOnMsgSRSV1(Input& in, Info& info)
+{
+	return SkipToTag(in, "SIGNONMSGSRSV1", true);
+}
+
+std::string Parser::ReadValue(Input& in, bool oneline)
+{
+	std::string s;
+	int c;
+	while( (c=in.peek())!=EOF && c!='<' )
+	{
+		in.advance();
+		if(oneline && c=='\n')
+			break;
+		s += (char)c;
+	}
+	return s;
+}
+
+
+// we only take information that we are interested in
+//
+bool Parser::ReadMsgSRSV1(Input& in, Info& info, const char * tag)
+{
+	int c;
+	Enter _(false);
+	if( !SkipToTag(in, "CURDEF") )
+	{
+		info.Error("Expecting <{}>", "CURDEF");
+		return false;
+	}
+	_.Log("1");
+	auto& r = info.stmt_hdr().Append();
+	r("CURDEF")=ReadOneLineValue(in).c_str();
+	_.Log("2");
+	if( !SkipToTag(in, "ACCTID") )
+	{
+		info.Error("Expecting <{}>", "ACCTID");
+		return false;
+	}
+	
+	r("ACCTID")=ReadOneLineValue(in).c_str();
+	_.Log("------");
+	_.Log("{}", (const char*)r("ACCTID").Get<String>());
+	_.Log("3");
+	if( !ReadBANKTRANLIST(in, info) )
+	{
+		info.Error("Error while parsing <{0}>...</{0}>.", "BANKTRANLIST");
+		return false;
+	}
+	_.Log("4");
+	if(ReadTag(in, info, "LEDGERBAL") && ReadTag(in, info, "BALAMT") )
+	{
+		r("LEDGERBALAMT") = ReadOneLineValue(in).c_str();
+		if( ReadTag(in, info, "DTASOF") )
+		{
+			r("LEDGERBALDTASOF") = ReadOneLineValue(in).c_str();
+		}
+		
+	}
+	_.Log("5");
+	if(ReadTag(in, info, "AVAILBAL") && ReadTag(in, info, "BALAMT") )
+	{
+		r("AVAILBALAMT") = ReadOneLineValue(in).c_str();
+		if( ReadTag(in, info, "DTASOF") )
+		{
+			r("AVAILDTASOF") = ReadOneLineValue(in).c_str();
+		}
+	}
+	// DO WE WANT TO VALIDATE THE INPUT?
+	_.Log("6");
+	
+	return SkipToTag(in, tag, true);
+}
+
+// actually, skip input until the desired tag is read or EOF
+//
+bool Parser::SkipToTag(Input& in, const char * tag, bool close)
+{
+	int c;
+	assert(IndexOfTag(tag)!=-1);
+	while( (c=in.read())!=EOF)
+	{
+		if(c=='<')
+		{
+			if(close && (c=in.read()) != '/')
+			{
+				continue;
+			}
+			int i = 0;
+			while( i<std::string_view(tag).length() && (c=in.read())==tag[i] )
+			{
+				++i;
+			}
+			if(i==std::string_view(tag).length() && in.read()=='>' )
+				return true;
+		}
+	}
+	return false;
+}
+
+// it seems we don't need tag_stack with this way of parsing
+// we will skip this one. Note we skip to the open tag <BANKTRANLIST>
+//
+bool Parser::ReadBANKTRANLIST(Input& in, Info& info)
+{
+	Enter _(false);
+	if(! SkipToTag(in, "BANKTRANLIST"))
+	{
+		info.Error("Expecting <{}>","BANKTRANLIST");
+	}
+	_.Log("1");
+	if(SkipToTag(in, "STMTTRN"))
+	{
+		int tag;
+		do{
+			_.Log("2");
+			if(!ReadSTMTTRN(in, info))
+				return false;
+		}while( (tag=ReadTag(in, info))== IndexOfTag("STMTTRN"));
+		return tag == IndexOfCloseTag("BANKTRANLIST");
+	}
+	return false;
+}
+
+// we just past the open tag <STMTTRN>
+// 
+bool Parser::ReadSTMTTRN(Input& in, Info& info)
+{
+	int tag;
+	Enter _(false);;
+	auto& r = info.stmt_trans().Append();
+	_.Dump(IndexOfCloseTag("STMTTRN"));
+	while( (tag = ReadTag(in, info))!=-1)
+	{
+		if(tag>=0)
+			_.Log("{}", tags[tag]);
+		else
+			_.Log("{}close {}", tag, tags[-tag-2]);
+		
+		switch(tag)
+		{
+		case IndexOfTag("TRNTYPE"):
+			r("TRNTYPE")=ReadOneLineValue(in).c_str();
+			break;
+		case IndexOfTag("DTPOSTED"):
+			r("DTPOSTED")=ReadOneLineValue(in).c_str();
+			break;
+		case IndexOfTag("TRNAMT"):
+			r("TRNAMT")=ReadOneLineValue(in).c_str();
+			break;
+		case IndexOfTag("FITID"):
+			r("FITID")=ReadOneLineValue(in).c_str();
+			break;
+		case IndexOfTag("NAME"):
+			r("NAME")=ReadOneLineValue(in).c_str();
+			break;
+		case IndexOfTag("MEMO"):
+			r("MEMO")=ReadOneLineValue(in).c_str();
+			break;
+		case IndexOfCloseTag("STMTTRN"):
+			return true;
+		}
+	}
+	_.Log("ReadSTMTTRN false");
+	return false;
+}
+
+
+bool Parser::ParseSGML(Input& in, Info& info)
+{
+	int c;
+	Enter _(true);
+	
+	if(!ReadTag(in, info, "OFX")){
+		info.Error("Expecting openning tag <OFX>");
+		return false;
+	}
+	info.tag_stack.push_back(IndexOfTag("OFX"));
+	
+	int tag;
+	while( (tag = ReadTag(in, info))!=-1)
+	{
+		switch(tag)
+		{
+		case IndexOfTag("SIGNONMSGSRSV1"):
+			info.tag_stack.push_back(IndexOfTag("SIGNONMSGSRSV1"));
+			if(!ReadSignOnMsgSRSV1(in, info))
+			{
+				info.Error("Error parsing <{}>.", tags[IndexOfTag("SIGNONMSGSRSV1")]);
+				return false;
+			}
+			break;
+		case IndexOfTag("CREDITCARDMSGSRSV1"):
+		case IndexOfTag("BANKMSGSRSV1"):
+//			LOG("ParseSGML - xxx MSGSRSV1");
+			_.Log("ParseSGML - xxx MSGSRSV1");
+			//info.tag_stack.push_back(tag);
+			if(!ReadMsgSRSV1(in, info,tags[tag]))
+			{
+				info.Error("Error parsing <{}.>", tags[tag]);
+				return false;
+			}
+			_.Log("ParseSGML - xxx MSGSRSV1 OK");
+//			LOG("ParseSGML - xxx MSGSRSV1 OK");
+			break;
+//			info.tag_stack.push_back(IndexOfTag("BANKMSGSRSV1"));
+//			if(!ReadBANKMSGSRSV1(in, info))
+//			{
+//				info.Error("Error parsing <{}.>", tags[IndexOfTag("BANKMSGSRSV1")]);
+//				return false;
+//			}
+//			break;
+		case IndexOfCloseTag("OFX"):
+			return true;
+		}
+	}
+	return false; // we ignore contents after </ofx> if any
 }
 
 // return true on successfully reading the key:value pair
@@ -107,11 +380,11 @@ bool Parser::ReadHeader(Input& in, Info& info)
 	return true;
 }
 
-
-int get_id(Parser::Input& in)
-{
-	return -1;
-}
+//
+//int get_id(Parser::Input& in)
+//{
+//	return -1;
+//}
 
 
 FileInput::FileInput(const char * file)
@@ -124,35 +397,5 @@ FileInput::FileInput(const char * file)
 		throw std::runtime_error(buff);
 	}
 }
-
-
-//int Parse::Input::peek()const
-//{
-//	if(nullptr == fp)
-//	{
-//		return ptr==end ? EOF : *ptr;
-//	}else{
-//		char c = getc(fp);
-//		return ungetc(c, fp);
-//	}
-//}
-//
-//int Parse::Input::read()
-//{
-//	if(nullptr == fp)
-//	{
-//		int c = ptr==end ? EOF : *ptr;
-//		++ptr;
-//		return c;
-//	}else{
-//		return getc(fp);
-//	}
-//}
-//		int advance();
-//	private:
-//		FILE * fp;
-//		char *ptr, *beg, *end;
-//	};
-
 	
 }

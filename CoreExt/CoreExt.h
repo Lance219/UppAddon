@@ -61,6 +61,19 @@ enum class tribool : char {
 	Null,  Unknown  = Null
 };
 
+// a compile time
+// const char * s = "Hello, world!";
+// has program life time.
+// sometimes we want to differentiate it from a const char * from
+//    String s("Hello, Upp User!");
+//    const char * t = s;
+//
+// This class serves this purpose.
+//
+// basically it's a way to tell program/functions that the StrLiteral
+// associated 'const char *' can be guaranteed to be valid, and no copy/
+// free is needed for readonly access.
+//
 class StrLiteral
 {
 public:
