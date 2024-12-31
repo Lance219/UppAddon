@@ -11,3 +11,7 @@ LAYOUT(CoordinateTranslationLayout, 540, 364)
 	ITEM(Upp::Label, prompt1, SetInk(Upp::Color(28, 0, 255)).LeftPosZ(12, 520).BottomPosZ(9, 19))
 END_LAYOUT
 
+LAYOUT(CtrlLayout, 516, 332)
+	ITEM(GridEz, grid, HSizePosZ(0, 128).VSizePosZ(0, 0))
+END_LAYOUT
+

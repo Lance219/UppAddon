@@ -26,17 +26,20 @@ struct MyApp :  WithMainLayout<TopWindow>
 
 		CtrlLayout(ctrl);
 		CtrlLayout(coord);
+		CtrlLayout(layout);
 		tab.Add(fs,t_("Apple Income Statement"));
 		tab.Add(ctrl,"Ctrls Layout");
 		tab.Add(coord, t_("Coordinate Translation"));
+		tab.Add(layout, t_("More Controls"));
 		//apple.SizePos();
 		fs.SizePos();
 		ctrl.SizePos();
-
+		layout.SizePos();
 		coord.SizePos();
 
 		AppleFS();
 		InitCtrlTab();
+		InitLayoutTab();
 		
 		coord.ez.DefaultColWidth(100).DefaultRowHeight(40);
 		for(int c=0; c<30; ++c)
@@ -66,12 +69,14 @@ struct MyApp :  WithMainLayout<TopWindow>
 	
 	void AppleFS();
 	void InitCtrlTab();
+	void InitLayoutTab();
 	
 public:
 	GridEz fs;
 //	WithGridEzLayout<GridEz> apple;
 	WithGridEzLayout<Ctrl> ctrl;
 	WithCoordinateTranslationLayout<Ctrl> coord;
+	WithCtrlLayout<Ctrl> layout;
 	EditString edit;
 	EditInt edit1;
 	
@@ -95,7 +100,7 @@ GUI_APP_MAIN
 }
 
 
-String Format(double number, unsigned decimal, const char * zeroAs="");
+static String Format(double number, unsigned decimal, const char * zeroAs="");
 
 void MyApp::AppleFS()
 {
@@ -209,7 +214,7 @@ bool MyApp::PaintCell(CellPainter& info)
 	return false;
 }
 
-String Format(double number, unsigned decimal, const char * zeroAs)
+static String Format(double number, unsigned decimal, const char * zeroAs)
 {
 	unsigned long long ipart,fract,mult=1ULL;
 	String s;
@@ -287,4 +292,29 @@ void MyApp::InitCtrlTab()
 	g.SetFixedLeftColCount(1);
 	g.JoinCells(1,3,3,1);
 	SetTimeCallback(-1000,[&clock]{clock.Reset();},1);
+}
+
+
+void MyApp::InitLayoutTab()
+{
+	auto& g = layout.grid;
+
+	g.Font(StdFont().Height(22))
+			.DefaultColWidthFromFont().DefaultRowHeightFromFont()
+			.NoBorders()
+			.FitColumns()
+			.FitRows()
+			
+			;//.NoFitColumns();
+	g.AddColumn(300);//.HorzAlign(ALIGN_RIGHT).PaddingRight(10).PaddingBottom(5);
+	g.AddColumn(300);
+	g.AddRow("Item"_z, "Enter Value"_z);//.Bold(tribool::True);//.Ink(Green());//.FontHeight(24);
+	g.SetFixedTopRowCount(1);
+	for(int i=0; i<30; ++i)
+	{
+		auto& row = g.AddRow(String().Cat()<<"Prompt "<<i+1, nullptr);
+		row.At(1).Create<EditString>().SetFont(StdFont().Height(22))
+			.SetFrame(BlackFrame());
+	}
+	
 }

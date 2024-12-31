@@ -1,4 +1,4 @@
-#include "../GridEz.h"
+#include <CtrlLibExt/CtrlLibExt.h>
 
 namespace lz{
 

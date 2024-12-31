@@ -1,8 +1,8 @@
 #ifndef _PopEz_PopEz_h_
 #define _PopEz_PopEz_h_
 
-#include <CtrlLibExt/CtrlLibExt.h>
-//#include <GridEz/GridEz.h>
+//#include <CtrlLibExt/CtrlLibExt.h>
+//#include <CtrlLibExt/GridEz/GridEz.h>
 #include "bits/EditKeyValue.h"
 
 BEGIN_NAMESPACE_LZ
@@ -12,6 +12,7 @@ struct PopMainEx;
 struct PopSlave
 {
 	PopSlave() = default;
+	
 
 	enum class HintReason : IntOfSize<sizeof(bool)>
 	{

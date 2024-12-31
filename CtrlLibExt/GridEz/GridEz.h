@@ -1,7 +1,7 @@
 #ifndef _GridEz_GridEz_h
 #define _GridEz_GridEz_h
 
-#include <type_traits>
+//#include <type_traits>
 //#include <CtrlLibExt/CtrlLibExt.h>
 
 BEGIN_NAMESPACE_LZ
@@ -145,13 +145,13 @@ class GridEz : public Ctrl
 
 		GridEz& DefaultColWidthFromFont()
 		{
-			defaultcolwidth = Font().GetAveWidth() * 20;
+			defaultcolwidth = Upp::Font().GetAveWidth() * 20;
 			return *this;
 		}
 
 		GridEz& DefaultRowHeightFromFont()
 		{
-			defaultrowheight = int ( Font().GetHeight() * 1.5 );
+			defaultrowheight = int ( Upp::Font().GetHeight() * 1.5 );
 			return *this;
 		}
 
