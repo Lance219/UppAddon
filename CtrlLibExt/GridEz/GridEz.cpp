@@ -387,7 +387,7 @@ GridEz::Column& GridEz::AddColumn(String name, int width, int dataid)
 		SetFixedTopRowCount(1);
 
 	if(GetRowCount() == 0) {
-		AddRow(name).GetRowFormat()->Bold(tribool::True);
+		AddRow(name).GetRowFormat().Bold(tribool::True);
 	}
 
 	else
@@ -406,7 +406,7 @@ GridEz::Column& GridEz::AddColumn(StrLiteral name, int width, int dataid)
 		SetFixedTopRowCount(1);
 
 	if(GetRowCount() == 0) {
-		AddRow(name).GetRowFormat()->Bold(tribool::True);
+		AddRow(name).GetRowFormat().Bold(tribool::True);
 	}
 
 	else

@@ -306,9 +306,9 @@ void MyApp::InitLayoutTab()
 			.FitRows()
 			
 			;//.NoFitColumns();
-	g.AddColumn(300);//.HorzAlign(ALIGN_RIGHT).PaddingRight(10).PaddingBottom(5);
+	g.AddColumn(300).HorzAlign(ALIGN_RIGHT).PaddingRight(10).PaddingBottom(5);
 	g.AddColumn(300);
-	g.AddRow("Item"_z, "Enter Value"_z);//.Bold(tribool::True);//.Ink(Green());//.FontHeight(24);
+	g.AddRow("Item"_z, "Enter Value"_z).Bold(tribool::True).Ink(Green()).FontHeight(24);
 	g.SetFixedTopRowCount(1);
 	for(int i=0; i<30; ++i)
 	{

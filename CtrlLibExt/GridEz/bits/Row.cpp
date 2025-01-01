@@ -1,4 +1,4 @@
-#include <CtrlLibExt/CtrlLibExt.h>
+#include "../../CtrlLibExt.h"
 
 namespace lz{
 
@@ -193,43 +193,13 @@ void GridEz::Row::GetCombinedDataIdNHeight ( int64& dataid, int& height ) const
 		}
 }
 
-
-GridEz::Row& GridEz::Row::Bold ( tribool v )
+CellFormat& GridEz::Row::GetRowFormat()
 {
-	if ( v != tribool::Null || HasRowData() )
-	{
-		AllocRowFormat();
-		info->Bold ( v );
-	}
-
-	return *this;
-}
-
-GridEz::Row& GridEz::Row::HorzAlign ( Alignment align )
-{
-	ASSERT ( align >= ALIGN_NULL && align <= ALIGN_CENTER );
-
-	if ( align != ALIGN_NULL || !HasRowData() )
-	{
-		AllocRowFormat();
-		info->HorzAlign ( align );
-	}
-
-	return *this;
-
-}
-
-GridEz::Row& GridEz::Row::VertAlign ( Alignment align )
-{
-	ASSERT ( align >= ALIGN_NULL && align <= ALIGN_CENTER );
-
-	if ( align != ALIGN_NULL || !HasRowData() )
-	{
-		AllocRowFormat();
-		info->VertAlign ( align );
-	}
-
-	return *this;
+        if(!HasRowData())
+        {
+                AllocRowFormat();
+        }
+        return info->rowfmt;
 }
 
 

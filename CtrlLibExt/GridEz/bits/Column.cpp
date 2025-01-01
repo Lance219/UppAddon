@@ -1,5 +1,4 @@
-//#include "../GridEz.h"
-#include <CtrlLibExt/CtrlLibExt.h>
+#include "../../CtrlLibExt.h"
 
 BEGIN_NAMESPACE_LZ
 

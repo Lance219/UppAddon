@@ -117,6 +117,8 @@ private:
 	Row& StoreDataIDAndHeight(int64 dataid, int height);
 
 public:
+	typedef Row Self;
+	
 	Row()
 		: info(nullptr)
 	{
@@ -124,7 +126,7 @@ public:
 
 	~Row();
 
-	Row& Bold(tribool v);
+//	Row& Bold(tribool v);
 	Cell& At(int col)
 	{
 		if(!HasRowData()) {
@@ -152,20 +154,25 @@ public:
 		return Cell::NullCell();
 	}
 
-	tribool Bold() const { return HasRowData() ? info->Bold() : tribool::Null; }
+//	tribool Bold() const { return HasRowData() ? info->Bold() : tribool::Null; }
 
-	int HorzAlign() const { return HasRowData() ? info->HorzAlign() : ALIGN_NULL; }
+//	int HorzAlign() const { return HasRowData() ? info->HorzAlign() : ALIGN_NULL; }
 
-	Row& HorzAlign(Alignment align);
-	int VertAlign() const { return HasRowData() ? info->VertAlign() : ALIGN_NULL; }
+//	Row& HorzAlign(Alignment align);
+//	int VertAlign() const { return HasRowData() ? info->VertAlign() : ALIGN_NULL; }
 
-	Row& VertAlign(Alignment align);
-	CellFormat* GetRowFormat() { return HasRowData() ? &info->rowfmt : nullptr; }
+//	Row& VertAlign(Alignment align);
 
-	const CellFormat* GetRowFormat() const
-	{
-		return const_cast<const CellFormat*>(const_cast<Row&>(*this).GetRowFormat());
-	}
+    CellFormat& GetRowFormat();
+    const CellFormat& GetRowFormat() const
+    {
+            return HasRowData() ? info->rowfmt : CellFormat::NullCellFormat();
+    }
+//	CellFormat* GetRowFormat() { return HasRowData() ? &info->rowfmt : nullptr; }
+//	const CellFormat* GetRowFormat() const
+//	{
+//		return const_cast<const CellFormat*>(const_cast<Row&>(*this).GetRowFormat());
+//	}
 
 	const CellFormat& GetFormat(int col) const
 	{
@@ -185,4 +192,5 @@ public:
 	Value GetData(int col) const;
 
 	friend class GridEz;
+	CELL_FORMAT_ITEMS(GetRowFormat())
 };

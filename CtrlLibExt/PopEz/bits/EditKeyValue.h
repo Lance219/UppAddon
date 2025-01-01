@@ -1,7 +1,7 @@
 #ifndef _PopEasy_EditKeyValue_h_
 #define _PopEasy_EditKeyValue_h_
 
-//#include <CtrlLibExt/CtrlLibExt.h>
+#include <CtrlLibExt/CtrlLibExt.h>
 
 BEGIN_NAMESPACE_LZ
 //

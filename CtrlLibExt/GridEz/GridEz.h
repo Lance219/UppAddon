@@ -145,13 +145,13 @@ class GridEz : public Ctrl
 
 		GridEz& DefaultColWidthFromFont()
 		{
-			defaultcolwidth = Upp::Font().GetAveWidth() * 20;
+			defaultcolwidth = Font().GetAveWidth() * 20;
 			return *this;
 		}
 
 		GridEz& DefaultRowHeightFromFont()
 		{
-			defaultrowheight = int ( Upp::Font().GetHeight() * 1.5 );
+			defaultrowheight = int ( Font().GetHeight() * 1.5 );
 			return *this;
 		}
 
@@ -401,7 +401,7 @@ class GridEz : public Ctrl
 
 		void Copy();
 
-		INCLUDE_CELL_FORMAT_METHODS
+		CELL_FORMAT_ITEMS(format)
 
 	private:
 		void AddRowHelper ( Vector<Cell>& vc ) {}

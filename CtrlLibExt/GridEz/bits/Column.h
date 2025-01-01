@@ -67,7 +67,7 @@ public:
 		return format;
 	}
 
-	INCLUDE_CELL_FORMAT_METHODS
+	CELL_FORMAT_ITEMS(format)
 private:
 	void SetWidthInternal(uint16 width){ this->width = width; }
 
