@@ -31,7 +31,6 @@ struct MyApp :  WithMainLayout<TopWindow>
 		tab.Add(ctrl,"Ctrls Layout");
 		tab.Add(coord, t_("Coordinate Translation"));
 		tab.Add(layout, t_("More Controls"));
-		//apple.SizePos();
 		fs.SizePos();
 		ctrl.SizePos();
 		layout.SizePos();
@@ -73,7 +72,6 @@ struct MyApp :  WithMainLayout<TopWindow>
 	
 public:
 	GridEz fs;
-//	WithGridEzLayout<GridEz> apple;
 	WithGridEzLayout<Ctrl> ctrl;
 	WithCoordinateTranslationLayout<Ctrl> coord;
 	WithCtrlLayout<Ctrl> layout;
@@ -276,7 +274,8 @@ void MyApp::InitCtrlTab()
 	g.Font(StdFont().Height(22))
 			.DefaultColWidthFromFont().DefaultRowHeightFromFont()
 			.NoBorders()
-			.NoFitColumns();
+			.NoFitColumns()
+			.HighlightCurRow(false);
 		
 	auto& c = g.AddColumn(200);
 	g.AddColumn(200);

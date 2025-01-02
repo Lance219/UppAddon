@@ -12,8 +12,14 @@ GridEz::GridEz()
 	, fixedleftcols(0)
 	, fixedrightcols(0)
 {
-	scrollx.Horz().WhenScroll = [this] { cached_data.scrollx_changed = true; Refresh(); };
-	scrolly.WhenScroll = [this] { cached_data.scrolly_changed = true; Refresh(); };
+	scrollx.Horz().WhenScroll = [this] {
+		cached_data.scrollx_changed = true;
+		Refresh();
+	};
+	scrolly.WhenScroll = [this] {
+		cached_data.scrolly_changed = true;
+		Refresh();
+	};
 	scrollx.SetLine(5);
 	scrolly.SetLine(10);
 	scrollx.NoAutoHide();
@@ -26,10 +32,100 @@ GridEz::GridEz()
 	fixedcolwantcursor = false;
 	fitcolumns = false;
 	fitrows = false;
+	highlightcurrow = true;
 	rowcanresize = true; // to default to false
 	colcanresize = true;
 	autohidesbs = true;
+	
 	DefaultRowHeightFromFont().DefaultColWidthFromFont();
+}
+
+bool GridEz::DetermineCellPosition(int screenr, int screenc, int region_index, int r,
+                                   CellPainter& di)
+{
+	int c = cached_data.map.col.visibles[screenc];
+
+	switch(region_index) {
+	case -2: // part of a region but not leading Cell, skip drawing
+		return false;
+
+	case -1: // non-joined cell
+		di.cellrect.left = cached_data.map.Left(c);
+		di.cellrect.right = cached_data.map.Right(c);
+		di.cellrect.top = cached_data.map.Top(r);
+		di.cellrect.bottom = cached_data.map.Bottom(r);
+		di.row = r;
+		di.col = c;
+		cached_data.map.translateRect(di.cellrect, di.visible_rect,
+		                              IsFixedTopRow(di.row)   ? 0
+		                              : IsFixedBtmRow(di.row) ? 2
+		                                                      : 1,
+		                              IsFixedLeftCol(di.col)    ? 0
+		                              : IsFixedRightCol(di.col) ? 2
+		                                                        : 1);
+
+		break;
+
+	default: // first visible Cell in a region.
+		ASSERT(region_index >= 0 && region_index < joinedCells.size());
+		{
+			Rect region = joinedCells[region_index];
+
+			di.cellrect.left = cached_data.map.Left(region.left);
+			di.cellrect.top = cached_data.map.Top(region.top);
+			di.cellrect.right = cached_data.map.Right(region.right - 1);
+			di.cellrect.bottom = cached_data.map.Bottom(region.bottom - 1);
+
+			di.row = region.top;
+			di.col = region.left;
+
+			cached_data.map.translateRect(di.cellrect, di.visible_rect,
+			                              IsFixedTopRow(region.top)   ? 0
+			                              : IsFixedBtmRow(region.top) ? 2
+			                                                          : 1,
+			                              IsFixedLeftCol(region.left)    ? 0
+			                              : IsFixedRightCol(region.left) ? 2
+			                                                             : 1,
+			                              IsFixedTopRow(region.bottom - 1)   ? 0
+			                              : IsFixedBtmRow(region.bottom - 1) ? 2
+			                                                                 : 1,
+			                              IsFixedLeftCol(region.right - 1)    ? 0
+			                              : IsFixedRightCol(region.right - 1) ? 2
+			                                                                  : 1);
+
+			// mark cells in the region painted
+			for(int k = screenr; k < cached_data.map.row.visibles.size() &&
+			                     cached_data.map.row.visibles[k] < region.bottom;
+			    ++k)
+				for(int m = screenc; m < cached_data.map.col.visibles.size() &&
+				                     cached_data.map.col.visibles[m] < region.right;
+				    ++m)
+					cached_data.map.joined[k][m] = -2; // mark the region as painted
+		}
+	}
+	return true;
+}
+
+void GridEz::DetermineCellFormat(const CellFormat& rowf, const CellFormat& colf,
+                                 const CellFormat& gridf, CellPainter& di)
+{
+	di.Compose(rowf, colf, gridf);
+
+	if(IsCurRow(di.row) && HighligthCurRow()) {
+		di.Ink(HasFocus() || IsPaintAsFocused(*this) ? SColorHighlightText() : SBlack());
+		di.Paper(HasFocus() || IsPaintAsFocused(*this) ? SColorHighlight()
+		                                               : Blend(SColorDisabled, SColorPaper));
+	}
+	else if(IsFixedRow(di.row) || IsFixedCol(di.col))
+		di.Paper(SColorFace());
+
+	if(WhenRowColor && IsRowInE(di.row) && !IsCurRow(di.row)) {
+		Color ink = di.Ink();
+		Color paper = di.Paper();
+		WhenRowColor(di.row - GetFixedTopRowCount(), ink, paper, 0);
+		di.Ink(ink);
+		di.Paper(paper);
+	}
 }
 
 void GridEz::Paint(Draw& w)
@@ -54,87 +150,13 @@ void GridEz::Paint(Draw& w)
 		for(int screenc = 0; screenc < cached_data.map.col.visibles.GetCount(); ++screenc) {
 			di.Clear();
 
-			int c = cached_data.map.col.visibles[screenc];
-			int region_index = vr[screenc];
-
-			switch(region_index) {
-			case -2: // part of a region but not leading Cell, skip drawing
+			if(!DetermineCellPosition(screenr, screenc, vr[screenc], r, di))
 				continue;
 
-			case -1: // non-joined cell
-				di.cellrect.left = cached_data.map.Left(c);
-				di.cellrect.right = cached_data.map.Right(c);
-				di.cellrect.top = cached_data.map.Top(r);
-				di.cellrect.bottom = cached_data.map.Bottom(r);
-				di.row = r;
-				di.col = c;
-				cached_data.map.translateRect(di.cellrect, di.visible_rect,
-				                  IsFixedTopRow(di.row)   ? 0
-				                  : IsFixedBtmRow(di.row) ? 2
-				                                          : 1,
-				                  IsFixedLeftCol(di.col)    ? 0
-				                  : IsFixedRightCol(di.col) ? 2
-				                                            : 1);
-
-				break;
-
-			default: // first visible Cell in a region.
-				ASSERT(region_index >= 0 && region_index < joinedCells.size());
-				{
-					Rect region = joinedCells[region_index];
-
-					di.cellrect.left = cached_data.map.Left(region.left);
-					di.cellrect.top = cached_data.map.Top(region.top);
-					di.cellrect.right = cached_data.map.Right(region.right - 1);
-					di.cellrect.bottom = cached_data.map.Bottom(region.bottom - 1);
-
-					di.row = region.top;
-					di.col = region.left;
-
-					cached_data.map.translateRect(di.cellrect, di.visible_rect,
-					                  IsFixedTopRow(region.top)   ? 0
-					                  : IsFixedBtmRow(region.top) ? 2
-					                                              : 1,
-					                  IsFixedLeftCol(region.left)    ? 0
-					                  : IsFixedRightCol(region.left) ? 2
-					                                                 : 1,
-					                  IsFixedTopRow(region.bottom - 1)   ? 0
-					                  : IsFixedBtmRow(region.bottom - 1) ? 2
-					                                                     : 1,
-					                  IsFixedLeftCol(region.right - 1)    ? 0
-					                  : IsFixedRightCol(region.right - 1) ? 2
-					                                                      : 1);
-
-					// mark cells in the region painted
-					for(int k = screenr;
-					    k < cached_data.map.row.visibles.size() && cached_data.map.row.visibles[k] < region.bottom; ++k)
-						for(int m = screenc;
-						    m < cached_data.map.col.visibles.size() && cached_data.map.col.visibles[m] < region.right;
-						    ++m)
-							cached_data.map.joined[k][m] = -2; // mark the region as painted
-				}
-			}
-
 			Row& row = rows[di.row];
-
 			Column& col = cols[di.col];
 
-			di.Compose(row.GetFormat(di.col), col, format);
-
-			if(IsCurRow(di.row)) {
-				di.Ink(HasFocus()||IsPaintAsFocused(*this) ? SColorHighlightText() : SBlack());
-				di.Paper(HasFocus()||IsPaintAsFocused(*this) ? SColorHighlight() : Blend(SColorDisabled, SColorPaper));
-			}
-			else if(IsFixedRow(di.row) || IsFixedCol(di.col))
-				di.Paper(SColorFace());
-
-			if(WhenRowColor && IsRowInE(di.row) && !IsCurRow(di.row)) {
-				Color ink = di.Ink();
-				Color paper = di.Paper();
-				WhenRowColor(di.row - GetFixedTopRowCount(), ink, paper, 0);
-				di.Ink(ink);
-				di.Paper(paper);
-			}
+			DetermineCellFormat(row.GetFormat(di.col), col, format, di);
 
 			di.datacol = col.DataColumn();
 
@@ -170,64 +192,62 @@ void GridEz::Paint(Draw& w)
 	}
 }
 
-void GridEz::CheckUpdateCache()const
+void GridEz::CheckUpdateCache() const
 {
+	// to be optimized
 	const_cast<GridEz*>(this)->PreparePainter();
 }
-
 
 void GridEz::PreparePainter()
 {
 	Size sz = GetSize();
-//	DUMP(cached_data.who);
-//	DUMP(sz);
-//	DUMP(cached_data.orig_size);
+	//	DUMP(cached_data.who);
+	//	DUMP(sz);
+	//	DUMP(cached_data.orig_size);
 
-	if( cached_data.who == this && cached_data.orig_size == sz && cached_data.NoFlagIsSet())
-	{
-			LOG(Upp::Format("GridEz::PreparePainter(), cache hit! Who = %p", (void*)cached_data.who));
-			return;
-	}else{
+	if(cached_data.who == this && cached_data.orig_size == sz && cached_data.NoFlagIsSet()) {
+		LOG(Upp::Format("GridEz::PreparePainter(), cache hit! Who = %p",
+		                (void*)cached_data.who));
+		return;
+	}
+	else {
 		cached_data.who = this;
 		cached_data.orig_size = sz;
-//		DUMP(sz);
 		cached_data.FlagMarkAll();
 	}
 
-	
-//	if(cached_data.x_dimension_recalculate || cached_data.y_dimension_recalculate)
+	//	if(cached_data.x_dimension_recalculate || cached_data.y_dimension_recalculate)
 	{
 		DoColWidthNSbs(sz);
-//		if(cached_data.x_dimension_recalculate)
-			DoColAccumulator();
-//		if(cached_data.y_dimension_recalculate)
-			DoRowAccumulator();
+		//		if(cached_data.x_dimension_recalculate)
+		DoColAccumulator();
+		//		if(cached_data.y_dimension_recalculate)
+		DoRowAccumulator();
 	}
 
-
-	cached_data.map.Set(sz, scrollx, scrolly, fixedleftcols, fixedrightcols, fixedtoprows, fixedbtmrows);
+	cached_data.map.Set(sz, scrollx, scrolly, fixedleftcols, fixedrightcols, fixedtoprows,
+	                    fixedbtmrows);
 
 	cached_data.map.col.UpdateVisibles(fixedleftcols, fixedrightcols, sz.cx);
 
 	cached_data.map.row.UpdateVisibles(fixedtoprows, fixedbtmrows, sz.cy);
 
-	if(scrollx.GetSize()!=Size{0,0}){
+	if(scrollx.GetSize() != Size{0, 0}) {
 		scrollx.SetTotal(cached_data.map.WidthOfEInFullPicture());
-	
+
 		scrollx.SetPage(cached_data.map.WidthOfEInGrid());
 	}
 
-	if(scrolly.GetSize() != Size{0,0}){
+	if(scrolly.GetSize() != Size{0, 0}) {
 		scrolly.SetTotal(cached_data.map.HeightOfEInFullPicture());
-	
+
 		scrolly.SetPage(cached_data.map.HeightOfEInGrid());
 	}
-
 
 	// construct the cached_data.map.joined matrix. see help file for
 	// the meaning of the member var 'joined'.
 	ConstructJoinedMatrix();
-//	cached_data.FlagClearAll();
+	//	cached_data.FlagClearAll();
 }
 
 void GridEz::ConstructJoinedMatrix()
@@ -266,7 +286,7 @@ void GridEz::ConstructJoinedMatrix()
 void GridEz::DoColAccumulator()
 {
 	int t = 0, w;
-	CAManager::Accum &_colacc = cached_data.map.col;
+	CAManager::Accum& _colacc = cached_data.map.col;
 
 	_colacc.ends.SetCount(GetColCount());
 
@@ -279,8 +299,8 @@ void GridEz::DoColAccumulator()
 
 void GridEz::DoRowAccumulator()
 {
-	int t=0, w;
-	CAManager::Accum &_rowacc = cached_data.map.row;
+	int t = 0, w;
+	CAManager::Accum& _rowacc = cached_data.map.row;
 	t = 0;
 
 	_rowacc.ends.SetCount(GetRowCount());
@@ -291,7 +311,6 @@ void GridEz::DoRowAccumulator()
 		_rowacc.ends[i] = t;
 	}
 }
-
 
 GridEz& GridEz::SetRowCount(int n)
 {
@@ -529,34 +548,30 @@ void GridEz::LeftDown(Point p, dword flags)
 {
 	if(cached_data.resizing_rc != -1) {
 		SetCapture();
-		if( cached_data.is_row )
-		{
+		if(cached_data.is_row) {
 			cached_data.orig_position = p.y;
 			cached_data.orig_dimension = GetRowHeight(cached_data.resizing_rc);
-		}else
-		{
+		}
+		else {
 			cached_data.orig_position = p.x;
 			cached_data.orig_dimension = GetColFullWidth(cached_data.resizing_rc);
-			if(IsFitColumns())
-			{
-				cached_data.orig_dimensions.SetCount(GetColCount() - cached_data.resizing_rc -1);
-				for(int i=cached_data.resizing_rc + 1, j=0; i<GetColCount(); ++i, ++j)
+			if(IsFitColumns()) {
+				cached_data.orig_dimensions.SetCount(GetColCount() - cached_data.resizing_rc -
+				                                     1);
+				for(int i = cached_data.resizing_rc + 1, j = 0; i < GetColCount(); ++i, ++j)
 					cached_data.orig_dimensions[j] = GetColFullWidth(i);
 			}
 		}
 		cached_data.orig_position = cached_data.is_row ? p.y : p.x;
-		
 	}
 	auto cp = GridToCell(p);
 
-	if(cp.row != -1 && cp.row != currow && (IsFixedRowWantCursor() || !IsFixedRow(cp.row)))
-	{
+	if(cp.row != -1 && cp.row != currow && (IsFixedRowWantCursor() || !IsFixedRow(cp.row))) {
 		currow = cp.row;
 		Refresh();
 	}
 
-	if(cp.col != -1 && cp.col != curcol && (IsFixedColWantCursor() || !IsFixedCol(cp.col)))
-	{
+	if(cp.col != -1 && cp.col != curcol && (IsFixedColWantCursor() || !IsFixedCol(cp.col))) {
 		curcol = cp.col;
 		Refresh();
 	}
@@ -587,28 +602,31 @@ void GridEz::MouseMove(Point p, dword flags)
 	if(HasCapture()) {
 		if(cached_data.resizing_rc != -1) {
 			int new_position;
-			
+
 			if(cached_data.is_row) {
 				new_position = p.y;
 				if(IsFixedBtmRow(cached_data.resizing_rc)) {
-					ResizeRow(cached_data.resizing_rc,
-						cached_data.orig_dimension-cached_data.orig_position + new_position);
-				} else {
-					ResizeRow(cached_data.resizing_rc,
-						cached_data.orig_dimension+new_position - cached_data.orig_position);
+					ResizeRow(cached_data.resizing_rc, cached_data.orig_dimension -
+					                                       cached_data.orig_position +
+					                                       new_position);
+				}
+				else {
+					ResizeRow(cached_data.resizing_rc, cached_data.orig_dimension +
+					                                       new_position -
+					                                       cached_data.orig_position);
 				}
 			}
 			else {
 				new_position = p.x;
 				if(IsFixedRightCol(cached_data.resizing_rc)) {
 					ResizeCol(cached_data.resizing_rc,
-						cached_data.orig_position - new_position);
-				} else {
+					          cached_data.orig_position - new_position);
+				}
+				else {
 					ResizeCol(cached_data.resizing_rc,
-						new_position - cached_data.orig_position);
+					          new_position - cached_data.orig_position);
 				}
 			}
-
 		}
 	}
 	else if(WhenMouseMove) {
@@ -619,28 +637,25 @@ void GridEz::MouseMove(Point p, dword flags)
 Image GridEz::CursorImage(Point p, dword)
 {
 	if(!HasCapture()) {
-		if(int col;
-		   colcanresize &&
-		   (col = cached_data.map.AtRightBoundOfColumn(p.x)) != -1 &&
-		   IsColResizable(col)
-		) {
-			if(IsFixedRightCol(col) && col < GetColCount()-1)
+		if(int col; colcanresize && (col = cached_data.map.AtRightBoundOfColumn(p.x)) != -1 &&
+		            IsColResizable(col)) {
+			if(IsFixedRightCol(col) && col < GetColCount() - 1)
 				cached_data.resizing_rc = col + 1;
 			else
 				cached_data.resizing_rc = col;
 			cached_data.is_row = false;
 		}
 		else if(int row;
-			rowcanresize &&
-			(row = cached_data.map.AtBottomBoundOfRow(p.y)) != -1
-		) {
+		        rowcanresize && (row = cached_data.map.AtBottomBoundOfRow(p.y)) != -1) {
 			cached_data.resizing_rc = row;
 			cached_data.is_row = true;
-		}else[[likely]]
+		}
+		else [[likely]]
 			cached_data.resizing_rc = -1;
-	
 	}
-	return cached_data.resizing_rc == -1 ? Image::Arrow() : cached_data.is_row ? Image::SizeVert() : Image::SizeHorz();
+	return cached_data.resizing_rc == -1 ? Image::Arrow()
+	       : cached_data.is_row          ? Image::SizeVert()
+	                                     : Image::SizeHorz();
 }
 
 GridEz::CellPoint& GridEz::GridToCell(Point p, GridEz::CellPoint& cp)
@@ -817,7 +832,8 @@ bool GridEz::PageUp()
 		return false;
 
 	if(currow == -1)
-		currow = cached_data.map.row.visibles[cached_data.map.row.visibles.GetCount() - GetFixedBottomRowCount() - 1];
+		currow = cached_data.map.row.visibles[cached_data.map.row.visibles.GetCount() -
+		                                      GetFixedBottomRowCount() - 1];
 
 	ycursor = cached_data.map.Top(currow);
 
@@ -945,8 +961,8 @@ void GridEz::DoColWidthNSbs(Size& sz)
 		}
 	}
 	cached_data.map.col.total_weight = total_weight;
-	//cached_data.width_changed = false;
-	//cached_data.height_changed = false;
+	// cached_data.width_changed = false;
+	// cached_data.height_changed = false;
 }
 
 void GridEz::DoAutoShowHideSbs(Size& sz, int tcx, int tcy, bool fitwidth)
@@ -979,13 +995,13 @@ void GridEz::DoAutoShowHideSbs(Size& sz, int tcx, int tcy, bool fitwidth)
 void GridEz::ResizeRow(int index, int new_height)
 {
 	int h = GetRowHeight(index);
-	
+
 	if(new_height < 0)
 		new_height = 0;
 
 	if(index >= rows.GetCount() || index < 0 || new_height == h)
 		return;
-	
+
 	if(!fitrows) {
 		rows[index].Height(new_height);
 	}
@@ -993,7 +1009,6 @@ void GridEz::ResizeRow(int index, int new_height)
 	}
 	cached_data.y_dimension_recalculate = true;
 	Refresh();
-	
 }
 
 void GridEz::ResizeCol(int index, int change_in_new_width)
@@ -1005,51 +1020,50 @@ void GridEz::ResizeCol(int index, int change_in_new_width)
 
 	if(index >= cols.GetCount() || index < 0 || h == new_width)
 		return;
-	
+
 	bool needrefresh = false;
-	if(!fitcolumns || index!=cols.GetCount()-1) {
+	if(!fitcolumns || index != cols.GetCount() - 1) {
 		cols[index].Width(new_width);
-		
+
 		needrefresh = true;
 	}
-	
-	if(fitcolumns && index!=cols.GetCount()-1) // the very last column cannot be adjusted this way
+
+	if(fitcolumns &&
+	   index != cols.GetCount() - 1) // the very last column cannot be adjusted this way
 	{
 		int old_fullwidth = cached_data.orig_dimension;
-		if(new_width<0)
+		if(new_width < 0)
 			new_width = 0;
 		int delta = change_in_new_width;
-	
 
-	
 		int total_weight = 0; // total weight of scaleweight of columns following this column;
-		int total_width = 0; // total naturalwidth of columns following this column
+		int total_width = 0;  // total naturalwidth of columns following this column
 		int accum_weight = 0; // increase when each affected column is process;
-		int accum_delta  = 0; //
-		for(int i=index+1; i<cols.GetCount(); ++i){
-			if(int sw=cols[i].ScaleWeight(); sw!=0){
+		int accum_delta = 0;  //
+		for(int i = index + 1; i < cols.GetCount(); ++i) {
+			if(int sw = cols[i].ScaleWeight(); sw != 0) {
 				total_weight += sw;
 				total_width += GetColFullWidth(i);
 			}
 		}
-			
-		if( total_weight == 0 ) // none of following columns allows resizing
+
+		if(total_weight == 0) // none of following columns allows resizing
 		{
-			//change_in_new_width = 0;
-			//request to change size vetoed
+			// change_in_new_width = 0;
+			// request to change size vetoed
 			return;
-		}else if( delta> total_width ){
+		}
+		else if(delta > total_width) {
 			delta = total_width; // maximum allowed
 		}
 
-		cols[index].FullWidth(old_fullwidth+delta);
-		for(int i=index+1; i<cols.GetCount(); ++i)
-		{
+		cols[index].FullWidth(old_fullwidth + delta);
+		for(int i = index + 1; i < cols.GetCount(); ++i) {
 			accum_weight += cols[i].ScaleWeight();
-			int this_delta = delta*accum_weight/total_weight-accum_delta;
-			new_width = cached_data.orig_dimensions[i-index-1] - this_delta;
-			if(new_width < 0){
-				this_delta-=new_width;
+			int this_delta = delta * accum_weight / total_weight - accum_delta;
+			new_width = cached_data.orig_dimensions[i - index - 1] - this_delta;
+			if(new_width < 0) {
+				this_delta -= new_width;
 				new_width = 0;
 			}
 			cols[i].FullWidth(new_width);
@@ -1057,11 +1071,10 @@ void GridEz::ResizeCol(int index, int change_in_new_width)
 		}
 		needrefresh = true;
 	}
-	if (needrefresh){
+	if(needrefresh) {
 		cached_data.x_dimension_recalculate = true;
 		Refresh();
 	}
 }
-
 
 END_NAMESPACE

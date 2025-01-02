@@ -1,5 +1,5 @@
 // to be included by GridEz.h only
-// moved out of class GridEz class body to decrease clutter
+// moved out of class GridEz class body to reduce clutter
 class JoinedCellManager{
 public:
 	//JoinedCellManager()=default;
@@ -17,5 +17,5 @@ public:
 	
 	String ToString()const{ return joinedCells.ToString(); }
 private:
-	Vector<Rect> joinedCells;
+	Vector<Rect> joinedCells; // Rect is in terms of row and column, instead of pixel coord
 };

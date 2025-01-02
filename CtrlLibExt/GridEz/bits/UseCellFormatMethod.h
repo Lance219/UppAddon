@@ -2,8 +2,6 @@
 	type item()const{ return obj.item(); }\
 	Self& item(type v){ obj.item(v); return *this; }
 
-//#define INCLUDE_CELL_FORMAT_METHODS CELL_FORMAT_ITEMS(format)
-		
 #define CELL_FORMAT_ITEMS(obj)\
 		CELL_FORMAT_ITEM(obj, Font, Upp::Font)\
         CELL_FORMAT_ITEM(obj, Bold, tribool)\

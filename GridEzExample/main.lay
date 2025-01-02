@@ -1,4 +1,4 @@
-LAYOUT(MainLayout, 400, 200)
+LAYOUT(MainLayout, 440, 272)
 	ITEM(Upp::TabCtrl, tab, HSizePosZ(4, 4).VSizePosZ(4, 4))
 END_LAYOUT
 
