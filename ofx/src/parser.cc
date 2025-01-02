@@ -111,41 +111,6 @@ std::string Parser::ReadValue(Input& in, bool oneline)
 	return s;
 }
 
-// 20241101000000.000[-5:EDT]
-// 20241012065958
-//
-// milliseconds and timezone ignored
-//
-Time	Parser::ReadTimeValue(Input& in)
-{
-	auto readint=[](const char *& beg, int len, int& v)
-	{
-		auto r = std::from_chars(beg, beg+len, v).ec != std::errc::invalid_argument;
-		beg += len;
-		return r;
-	};
-	std::string st= ReadOneLineValue(in);
-	std::string_view s{st};
-	
-	if(auto v = s.find_first_not_of("\t \r\n"); v!=s.npos)
-		s.remove_prefix(v);
-	if(s.empty())
-		return Null;
-
-	if(auto v = s.find_first_of(". [\n"); v!=s.npos)
-		s.remove_suffix(s.size()-v);
-	if(s.length()!=14)
-		return Null;
-	
-	int y,m,d,h,min,sec;
-	const char * p= s.data();
-	return readint(p,4,y) && readint(p,2,m) && readint(p,2,d) &&
-		readint(p,2,h) && readint(p,2,min) && readint(p,2,sec) ?
-		Time(y,m,d,h,min,sec) : Null;
-	
-}
-
-
 // we only take information that we are interested in
 //
 bool Parser::ReadMsgSRSV1(Input& in, Info& info, const char * tag)
