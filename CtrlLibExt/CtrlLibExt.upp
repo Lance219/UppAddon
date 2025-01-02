@@ -14,10 +14,10 @@ file
 	GridEz/bits/CellFormatBitfields.h,
 	GridEz/bits/ClientAreaManager.h,
 	GridEz/bits/ClientAreaManager.cpp,
+	GridEz/bits/GridCell.h,
 	GridEz/bits/Column.h,
 	GridEz/bits/Column.cpp,
 	GridEz/bits/GridCell.cpp,
-	GridEz/bits/GridCell.h,
 	GridEz/bits/JoinedCellManager.cpp,
 	GridEz/bits/JoinedCellManager.h,
 	GridEz/bits/Row.h,
@@ -26,5 +26,8 @@ file
 	PopEz/PopEz.h,
 	PopEz/PopEz.cpp,
 	PopEz/EditKeyValue.cpp,
-	PopEz/bits/EditKeyValue.h;
+	PopEz/bits/EditKeyValue.h,
+	Misc readonly separator,
+	src.tpp,
+	srcimp.tpp;
 

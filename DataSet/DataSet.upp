@@ -11,6 +11,7 @@ pkg_config(LINUX|FREEBSD|OPENBSD) libpq;
 file
 	DataSet.h,
 	DataSet.cpp,
+	bits/FieldDef.h,
 	bits/FieldValue.h,
 	bits/RecordSet.h,
 	bits/RecordSet.cpp,
@@ -18,7 +19,6 @@ file
 	bits/RecordSetNField.hpp,
 	bits/RecordDef.h,
 	bits/RecordDef.cpp,
-	bits/FieldDef.h,
 	bits/Util.cpp,
 	bits/Util.h,
 	srcimp.tpp,

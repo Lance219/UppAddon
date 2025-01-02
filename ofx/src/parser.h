@@ -50,10 +50,10 @@ public:
 				auto & m = ds.Add("stmt_hdr");
 				m.AddField("CURDEF", FT_STRING)
 					.AddField("ACCTID", FT_STRING)
-					.AddField("LEDGERBALAMT", FT_STRING)
-					.AddField("LEDGERBALDTASOF", FT_STRING)
-					.AddField("AVAILBALAMT", FT_STRING)
-					.AddField("AVAILBALDTASOF", FT_STRING)
+					.AddField("LEDGERBALAMT", FT_DOUBLE)
+					.AddField("LEDGERBALDTASOF", FT_TIME)
+					.AddField("AVAILBALAMT", FT_DOUBLE)
+					.AddField("AVAILBALDTASOF", FT_TIME)
 					.PhysicalLayout();
 				return m;
 			}
@@ -64,8 +64,8 @@ public:
 			if(!ds.Contains("stmt_trans")){
 				auto & m = ds.Add("stmt_trans");
 				m.AddField("TRNTYPE", FT_STRING)
-					.AddField("DTPOSTED", FT_STRING)
-					.AddField("TRNAMT", FT_STRING)
+					.AddField("DTPOSTED", FT_TIME)
+					.AddField("TRNAMT", FT_DOUBLE)
 					.AddField("FITID", FT_STRING)
 					.AddField("NAME", FT_STRING)
 					.AddField("MEMO", FT_STRING)
@@ -91,6 +91,7 @@ private:
 	bool ReadKeyValue(Input& in, int key_index, std::string& value);
 	bool ParseSGML(Input& in, Info& info);
 	std::string ReadValue(Input& in, bool oneline=false);
+	Time	ReadTimeValue(Input& in);
 	std::string ReadOneLineValue(Input& in){
 		return ReadValue(in, true);
 	}

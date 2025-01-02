@@ -141,9 +141,7 @@ private:
 
 	// all type should accept input in the format of traditional const char *
 	//
-	void SetFromPChar ( const char * input );
-//friend String& operator<<(String& lhs, const FieldValue& rhs);
-//friend String& operator<<(String& lhs, FieldValue& rhs);
+	//	void SetFromPChar ( const char * input );
 
 	friend class RecordSet;
 };

@@ -77,12 +77,13 @@ public:
 	WithCtrlLayout<Ctrl> layout;
 	EditString edit;
 	EditInt edit1;
-	
 };
 
 
 GUI_APP_MAIN
 {
+	Ctrl::SkinChangeSensitive(true);
+	
 	MyApp p;
 	DUMP(sizeof(GridEz::JoinedCellManager));
 	DUMP(sizeof(Upp::Ctrl));
@@ -96,7 +97,6 @@ GUI_APP_MAIN
 	p.Sizeable().MinimizeBox().MaximizeBox().Maximize();
 	p.Run();
 }
-
 
 static String Format(double number, unsigned decimal, const char * zeroAs="");
 
@@ -116,10 +116,8 @@ void MyApp::AppleFS()
 		fs.AddColumn(150,3).HorzAlign(ALIGN_RIGHT).ScaleWeight(7); // 6 months ends march 26 ,2016
 		fs.AddColumn(20);
 		fs.AddColumn(150,4).HorzAlign(ALIGN_RIGHT).ScaleWeight(7); // 6 months ends march 28 ,2015
-		
-		
+
 		//fs.SetFixedLeftColCount(1);
-		
 		
 		fs.AddHeightedRow(200,"Apple Inc"_z).HorzAlign(ALIGN_CENTER).VertAlign(ALIGN_BOTTOM);
 		fs.AddRow("UNAUDITED CONDENSED STATEMENTS OF OPERATIONS"_z)
@@ -158,8 +156,6 @@ void MyApp::AppleFS()
 		fs.AddExternalRow(15);
 		fs.AddExternalRow(16);
 		fs.AddExternalRow(17);
-//		fs.AddRow("Hello, world!", "Hello, world!"_z);
-//		fs.SetFixedBottomRowCount(1);
 		
 		fs.WhenPaintingCell<<[=, this](CellPainter& info){return PaintCell(info);};
 }
