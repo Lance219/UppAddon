@@ -8,6 +8,7 @@ file
 	bits/using_upp_namespace.h,
 	GridEz/GridEz.h,
 	GridEz/GridEz.cpp,
+	GridEz/bits/Box.h,
 	GridEz/bits/CachedData.h,
 	GridEz/bits/CellFormat.h,
 	GridEz/bits/CellFormat.cpp,

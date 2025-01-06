@@ -131,6 +131,7 @@ void GridEz::DetermineCellFormat(const CellFormat& rowf, const CellFormat& colf,
 void GridEz::Paint(Draw& w)
 {
 	LTIMING("GridEz::Paint");
+	LOG("GridEz::Paint");
 	Rect rect(GetSize());
 	w.DrawRect(rect, SColorPaper());
 
@@ -170,21 +171,25 @@ void GridEz::Paint(Draw& w)
 			case DT_NODATA: // now action
 				break;
 
-			default: {
+			default:
 				di.ctrl = row.GetCell(di.col).GetCtrl();
-
 				if(di.ctrl) {
 					Ctrl& c = *di.ctrl;
 
-					if(!c.HasFocusDeep() || c.GetParent() != this) {
-						AddChild(&c);
+					if(!HasChildDeep(&c)){
+						Add(c);
 					}
-
-					c.SetRect(di.cellrect);
+					c.SetRect(di.cellrect-Point(1000,1000));
+					if(di.cellrect != di.visible_rect){
+						CheckBox(c, di.cellrect, di.visible_rect);
+					}else{
+						if(IsBoxed(c))
+							Unbox(c);
+						c.SetRect(di.cellrect);
+					}
 				}
 				else
 					di.text = row.GetText(di.col);
-			}
 			}
 			if(!WhenPaintingCell(di))
 				di.Paint();
@@ -546,6 +551,12 @@ void GridEz::MouseWheel(Point, int zdelta, dword) { scrolly.Wheel(zdelta); }
 
 void GridEz::LeftDown(Point p, dword flags)
 {
+//	auto cpc = GridPointToChildCtrl(p);
+//	if(cpc.ctrl){
+//		cpc.ctrl->LeftDown(cpc.point, flags);
+//		return;
+//	}
+	
 	if(cached_data.resizing_rc != -1) {
 		SetCapture();
 		if(cached_data.is_row) {
@@ -596,6 +607,18 @@ void GridEz::RightDown(Point p, dword flags)
 	if(WhenBar)
 		MenuBar::Execute(WhenBar);
 }
+//#include <ctime>
+//Image  GridEz::MouseEvent(int event, Point p, int zdelta, dword keyflags)
+//{
+//	auto cpc = GridPointToChildCtrl(p);
+//	auto ret = cpc.ctrl ?
+//		cpc.ctrl->MouseEvent(event, cpc.point, zdelta, keyflags)
+//		:CursorImage(p,keyflags);
+//	LOG(std::time(NULL));
+//	Refresh();
+//	return ret;
+//}
+
 
 void GridEz::MouseMove(Point p, dword flags)
 {
@@ -658,7 +681,7 @@ Image GridEz::CursorImage(Point p, dword)
 	                                     : Image::SizeHorz();
 }
 
-GridEz::CellPoint& GridEz::GridToCell(Point p, GridEz::CellPoint& cp)
+void GridEz::GridToCell(Point p, GridEz::CellPoint& cp)
 {
 	cp.row = GetRowIndexAt(p.y);
 	cp.col = GetColumnIndexAt(p.x);
@@ -673,7 +696,7 @@ GridEz::CellPoint& GridEz::GridToCell(Point p, GridEz::CellPoint& cp)
 	else
 		cp.point = Null;
 
-	return cp;
+//	return cp;
 }
 
 bool GridEz::Key(dword key, int flags)
@@ -765,6 +788,7 @@ bool GridEz::NextRow()
 {
 	if(NextRC(GetRowCount(), GetFixedTopRowCount(), GetFixedBottomRowCount(), currow,
 	          IsFixedRowWantCursor())) {
+	    ASSERT(cached_data.who == this);
 		scrolly.Set(cached_data.map.row.MakeVisible(currow));
 		Refresh();
 		return true;

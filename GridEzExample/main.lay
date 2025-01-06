@@ -8,7 +8,7 @@ END_LAYOUT
 
 LAYOUT(CoordinateTranslationLayout, 540, 364)
 	ITEM(GridEz, ez, HSizePosZ(0, 0).VSizePosZ(0, 36))
-	ITEM(Upp::Label, prompt1, SetInk(Upp::Color(28, 0, 255)).LeftPosZ(12, 520).BottomPosZ(9, 19))
+	ITEM(Upp::Label, prompt1, SetInk(Upp::Green).LeftPosZ(12, 520).BottomPosZ(9, 19))
 END_LAYOUT
 
 LAYOUT(CtrlLayout, 516, 332)

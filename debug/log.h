@@ -22,7 +22,7 @@ namespace lz{
 void log(std::string_view s);
 void SetLogFile( const char* path);
 
-#define Dump(a) Log("{}={}", #a, a)
+#define DumP(a) Log("{}={}", #a, a)
 
 class Enter
 {

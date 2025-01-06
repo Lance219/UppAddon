@@ -50,6 +50,7 @@
 # endif
 #endif
 
+#include <debug/log.h>
 
 BEGIN_NAMESPACE_LZ
 #include "bits/using_upp_names.h"

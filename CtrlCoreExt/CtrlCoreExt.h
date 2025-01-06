@@ -76,9 +76,12 @@ struct CtrlHack : public Pte<CtrlHack>
 		struct{
 			byte			skipped[3];
 			bool			owned:1;           //33
-			bool			paintAsFocused:1;
+			bool			paintAsFocused:1; // used by GridEz
+			bool			matched:1; // used by EditKeyValue
 		};
 	};
+	bool GetMatched()const{ return matched; }
+	void SetMatched(int v){ matched = v;	}
 	int32 GetReserved()const{ return padding; }
 	void SetReserved(int32 v){ padding = v; }
 #endif
@@ -196,7 +199,6 @@ inline bool IsOwned ( CtrlClass auto& ctrl )
 	return reinterpret_cast<CtrlHack*> ( &ctrl )->IsOwned();
 }
 
-//template <class T>
 inline bool IsOwned ( CtrlClass auto* ctrl )
 {
 	return IsOwned ( *ctrl );
@@ -212,7 +214,6 @@ inline auto& SetPaintAsFocused ( CtrlClass auto& ctrl, bool paf = true )
 	return ctrl;
 }
 
-//template <class T>
 inline auto SetPaintAsFocused ( CtrlClass auto* ctrl, bool paf = true )
 {
 	return &SetPaintAsFocused ( *ctrl, paf );
@@ -229,28 +230,55 @@ inline bool IsPaintAsFocused ( CtrlClass auto* ctrl )
 	return reinterpret_cast<CtrlHack*> ( ctrl )->IsPaintAsFocused();
 }
 
-#ifdef CPU_64
-inline int32 GetReserved( const CtrlClass auto& ctrl)
+inline auto& SetMatched ( CtrlClass auto& ctrl, bool v = true )
 {
-	return reinterpret_cast<const CtrlHack&> ( ctrl ).GetReserved();
-}
-
-inline int32 GetReserved( const CtrlClass auto* ctrl)
-{
-	return GetReserved( *ctrl );
-}
-
-inline void SetReserved( CtrlClass auto& ctrl, int32 value)
-{
-	reinterpret_cast<CtrlHack&> ( ctrl ).SetReserved( value );
-}
-
-inline void SetReserved( CtrlClass auto* ctrl, int32 value)
-{
-	SetReserved( *ctrl, value );
-}
-
+#ifdef _DEBUG
+	static CtrlHack h;
 #endif
+
+	reinterpret_cast<CtrlHack*> ( &ctrl )->SetMatched(v);
+	return ctrl;
+}
+
+inline auto SetMatched ( CtrlClass auto* ctrl, bool v = true )
+{
+	return &SetPaintAsFocused ( *ctrl, v );
+}
+
+
+inline bool GetMatched ( CtrlClass auto& ctrl )
+{
+	return reinterpret_cast<const CtrlHack*> ( &ctrl )->GetMatched();
+}
+
+inline bool GetMatched ( CtrlClass auto* ctrl )
+{
+	return reinterpret_cast<const CtrlHack*> ( ctrl )->GetMatched();
+}
+
+
+//#ifdef CPU_64
+//inline int32 GetReserved( const CtrlClass auto& ctrl)
+//{
+//	return reinterpret_cast<const CtrlHack&> ( ctrl ).GetReserved();
+//}
+//
+//inline int32 GetReserved( const CtrlClass auto* ctrl)
+//{
+//	return GetReserved( *ctrl );
+//}
+//
+//inline void SetReserved( CtrlClass auto& ctrl, int32 value)
+//{
+//	reinterpret_cast<CtrlHack&> ( ctrl ).SetReserved( value );
+//}
+//
+//inline void SetReserved( CtrlClass auto* ctrl, int32 value)
+//{
+//	SetReserved( *ctrl, value );
+//}
+//
+//#endif
 
 }//eons lz
 

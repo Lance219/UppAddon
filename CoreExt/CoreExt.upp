@@ -1,7 +1,8 @@
 description "Some common utility that  may of common interest\377";
 
 uses
-	Core;
+	Core,
+	debug;
 
 file
 	CoreExt.h,

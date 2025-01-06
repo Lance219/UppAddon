@@ -35,14 +35,14 @@ private:
 	
 	bool IsMatched()const{
 #ifdef CPU_64
-		return GetReserved(this)==1;
+		return GetMatched(this);
 #else
 		return matched;
 #endif
 	}
 	void SetMatched(bool v){
 #ifdef CPU_64
-		SetReserved(this, (int32)(v?1:0) );
+		lz::SetMatched(this, v );
 #else
 		matched = v;
 #endif

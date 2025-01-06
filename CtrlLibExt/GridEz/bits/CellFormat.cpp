@@ -79,12 +79,14 @@ void CellPainter::Paint()
 
 
 	if(ctrl != nullptr) {
-		// not what I'd like, but for now
-		if(r.left<visible_rect.left)
-			r.left = visible_rect.left;
-		if(r.top<visible_rect.top)
-			r.top = visible_rect.top;
-		ctrl->SetRect(r);
+//		if(cellrect != visible_rect)
+//		{
+//			CheckBox(*ctrl, cellrect, visible_rect);
+//		}else if(IsBoxed(*ctrl))
+//			Unbox(*ctrl);
+
+//		ctrl->SetRect(cellrect-cellrect.BottomRight());
+//		ctrl->DrawCtrl(w,cellrect.left,cellrect.top);
 	}
 	else if(!text.IsEmpty()) {
 		Size sz = Upp::GetSmartTextSize(text, Font(), r.GetWidth());

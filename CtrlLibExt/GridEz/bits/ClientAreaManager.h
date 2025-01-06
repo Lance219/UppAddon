@@ -53,15 +53,9 @@ struct CAManager
 		
 		int IndexFullPictureToGrid(int fp_index)const
 		{
-			// to be polished.
-			for(int i=0; i<visibles.GetCount(); ++i)
-			{
-				if( visibles[i] == fp_index )
-					return i;
-				if( visibles[i] > fp_index)
-					break;
-			}
-			return -1;
+			int p=std::lower_bound(visibles.begin(),visibles.end(),fp_index)
+							-visibles.begin();
+			return p!=visibles.size() && visibles[p] == fp_index ? p : -1;
 		}
 
 		int OffsetI()const{ return dimFE-dimE;}
@@ -79,9 +73,14 @@ struct CAManager
 		
 		bool IsVisible(int index)const
 		{
-			auto p=std::lower_bound(visibles.begin(),visibles.end(),index);
-			return p!=visibles.end() && *p==index;
+			return IndexFullPictureToGrid(index) != -1;
 		}
+		
+//		bool IsFullyVisible(int index)const
+//		{
+//			int i = IndexFullPictureToGrid(index);
+//			return ;
+//		}
 		
 		int MakeVisible(int index)const
 		{

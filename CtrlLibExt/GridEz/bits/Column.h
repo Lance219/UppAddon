@@ -5,10 +5,12 @@ struct Column: public Moveable<Column>
 
 public:
 	typedef Column Self;
+	
+	~Column(){ CheckRemoveEdit(); }
 
-	Column() : format(nullptr), naturalwidth ( DEFAULT_COL_WIDTH ),
+	Column() :  naturalwidth ( DEFAULT_COL_WIDTH ),
 				datacolumn ( -1 ), hidden(false), scaleweight(0),
-				canresize(true) { }
+				canresize(true),format(nullptr),edit(nullptr) { }
 
 	int		Width() const
 	{
@@ -41,6 +43,22 @@ public:
 		return datacolumn;
 	}
 	
+	Ctrl*	Edit()const{ return const_cast<Self&>(*this).edit; }
+	Self&	Edit(Ctrl* ctrl){
+		if(edit!=ctrl)
+			CheckRemoveEdit();
+		edit = ctrl;
+		return *this;
+	}
+	template <typename T, typename ...Ts>
+	Self& EditWith(Ts&&... ts)
+	{
+		CheckRemoveEdit();
+		One<T> c;
+		c.Create(std::forward<Ts>(ts)...);
+		edit = MarkAsOwned(c.Detach());
+	}
+		
 	byte	ScaleWeight()const			{ return scaleweight;			}
 	Self&   ScaleWeight(byte w)			{ scaleweight = w; return *this;}
 	
@@ -70,6 +88,14 @@ public:
 	CELL_FORMAT_ITEMS(format)
 private:
 	void SetWidthInternal(uint16 width){ this->width = width; }
+	void CheckRemoveEdit()
+	{
+		if(edit){
+			edit->Remove();
+			if(IsOwned(edit))
+				delete edit;
+		}
+	}
 
 private:
 	uint16		width; // this field is calculated at each Paint(may optimize later to reduce calculation)
@@ -79,4 +105,5 @@ private:
 	bool		hidden:1;
 	bool		canresize:1;
 	CellFormat  format;
+	Ctrl*		edit;
 };

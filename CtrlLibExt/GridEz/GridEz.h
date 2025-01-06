@@ -12,6 +12,7 @@ BEGIN_NAMESPACE_LZ
 
 class GridEz : public Ctrl {
 public:
+//	Image  MouseEvent(int event, Point p, int zdelta, dword keyflags)override;
 	void LeftDown(Point p, dword) override;
 	void LeftDouble(Point p, dword) override;
 	void RightDown(Point p, dword flags) override;
@@ -36,6 +37,9 @@ public:
 	struct CellPoint {
 		int row, col;
 		Point point;
+	};
+	struct CellPointWithCtrl : public CellPoint{
+		Ctrl * ctrl;
 	};
 
 public:
@@ -256,11 +260,22 @@ public:
 
 	int GetFixedRowCount() const { return fixedtoprows + fixedbtmrows; }
 
-	CellPoint& GridToCell(Point p, CellPoint& cp);
+	void GridToCell(Point p, CellPoint& cp);
 	CellPoint GridToCell(Point p)
 	{
 		CellPoint q;
-		return GridToCell(p, q);
+		GridToCell(p, q);
+		return q;
+	}
+
+	CellPointWithCtrl GridPointToChildCtrl(Point p)
+	{
+		CellPointWithCtrl q;
+		GridToCell(p,q);
+
+		q.ctrl =  q.row>=0 && q.col>=0 ?
+			rows[q.row].GetCell(q.col).GetCtrl() : nullptr;
+		return q;
 	}
 
 	int GetColumnIndexAt(int x) const { return cached_data.map.GetColumnIndexAt(x); }
@@ -420,6 +435,9 @@ protected:
 	// static  GridEz* who;
 	// #endif
 };
+
+#include "bits/Box.h"
+
 
 inline int GridEz::ColWidth(const GridEz::Column& col) const
 {

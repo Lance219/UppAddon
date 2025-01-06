@@ -85,6 +85,7 @@ GUI_APP_MAIN
 	Ctrl::SkinChangeSensitive(true);
 	
 	MyApp p;
+	DUMP(sizeof(GridCtrl));
 	DUMP(sizeof(GridEz::JoinedCellManager));
 	DUMP(sizeof(Upp::Ctrl));
 	DUMP(sizeof(Upp::ScrollBar));
@@ -289,27 +290,97 @@ void MyApp::InitCtrlTab()
 	SetTimeCallback(-1000,[&clock]{clock.Reset();},1);
 }
 
+//static void LoadFonts(DropList& face, Index<String>& fni, bool fixed)
+//{
+//	for(int i = 0; i < Font::GetFaceCount(); i++)
+//		if(!!(Font::GetFaceInfo(i) & Font::FIXEDPITCH) == fixed) {
+//			String n = Font::GetFaceName(i);
+//			if(fni.Find(n)
+//			 < 0) {
+//				fni.Add(n);
+//				face.Add(i, n);
+//			}
+//		}
+//}
+//
+//
+//static void fillfonts(DropList& face)
+//{
+//	struct DisplayFace : public Display {
+//		void Paint(Draw& w, const Rect& r, const Value& q, Color ink, Color paper, dword style) const {
+//			int ii = q;
+//			Font fnt = StdFont();
+//			if(!(Font::GetFaceInfo(ii) & Font::SPECIAL))
+//				fnt.Face(ii);
+//			w.DrawRect(r, paper);
+//			w.DrawText(r.left, r.top + (r.Height() - fnt.Info().GetHeight()) / 2,
+//			           Font::GetFaceName((int)q), fnt, ink);
+//		}
+//	};
+//	Index<String> fni;
+//	LoadFonts(face, fni, true);
+//	face.AddSeparator();
+//	LoadFonts(face, fni, false);
+//	face.SetIndex(0);
+//	face.SetDisplay(Single<DisplayFace>());
+//}
+
+
+static void fillfonts(DropList& face)
+{
+	struct DisplayFace : public Display {
+		void Paint(Draw& w, const Rect& r, const Value& q, Color ink, Color paper, dword style) const {
+			int ii = q;
+			Font fnt = StdFont();
+			if(!(Font::GetFaceInfo(ii) & Font::SPECIAL))
+				fnt.Face(ii);
+			w.DrawRect(r, paper);
+			w.DrawText(r.left, r.top + (r.Height() - fnt.Info().GetHeight()) / 2,
+			           Font::GetFaceName((int)q), fnt, ink);
+		}
+	};
+	face.Add(Font::ARIAL);
+	face.Add(Font::ROMAN);
+	face.Add(Font::COURIER);
+	for(int i = Font::COURIER + 1; i < Font::GetFaceCount(); i++)
+		if(Font::GetFaceInfo(i) & Font::SCALEABLE)
+			face.Add(i);
+	face.SetDisplay(Single<DisplayFace>());
+}
+
+static void fillsizes(DropList& h)
+{
+	for(int i = 6; i < 64; i++)
+		h.Add(i);
+}
 
 void MyApp::InitLayoutTab()
 {
 	auto& g = layout.grid;
 
-	g.Font(StdFont().Height(22))
+	g.FontHeight(22)
 			.DefaultColWidthFromFont().DefaultRowHeightFromFont()
 			.NoBorders()
-			.FitColumns()
-			.FitRows()
+			.Padding(5)
+			.FitColumns();
+//			.FitRows()
 			
 			;//.NoFitColumns();
-	g.AddColumn(300).HorzAlign(ALIGN_RIGHT).PaddingRight(10).PaddingBottom(5);
-	g.AddColumn(300);
-	g.AddRow("Item"_z, "Enter Value"_z).Bold(tribool::True).Ink(Green()).FontHeight(24);
-	g.SetFixedTopRowCount(1);
-	for(int i=0; i<30; ++i)
+	g.AddColumn(50).HorzAlign(ALIGN_CENTER).ScaleWeight(10);
+	g.AddColumn(200).ScaleWeight(40);
+	g.AddColumn(70).ScaleWeight(10);
+	g.AddColumn(50).ScaleWeight(10);
+	g.AddColumn(50).ScaleWeight(50);
+	for(int i=0; i<6; ++i)
 	{
-		auto& row = g.AddRow(String().Cat()<<"Prompt "<<i+1, nullptr);
-		row.At(1).Create<EditString>().SetFont(StdFont().Height(22))
-			.SetFrame(BlackFrame());
+		static const char * prompts[]={"Normal", "V.split", "Small", "Special",
+			"Console", ".t file"};
+		auto& r = g.AddRow(lz::StrLiteral(prompts[i]));
+		fillfonts(r.At(1).Create<DropList>());
+		fillsizes(r.At(2).Create<DropList>());
+		r.At(3).Create<Option>().SetLabel(t_("Bold"));
+		r.At(4).Create<Option>().SetLabel(t_("Italic"));
 	}
+//	r1.At(2).Create<DropList>().Add;
 	
 }

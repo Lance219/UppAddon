@@ -50,6 +50,21 @@ Cell::~Cell()
 		{
 			Ctrl * c = reinterpret_cast<Ctrl*> ( AsInt(pCellData) - 3 );
 			ASSERT ( lz::AsUInt ( pCellData ) - lz::AsUInt ( c ) == 3 );
+			// it's weired, but our ctrl will be responsible to free
+			// its Box parent if any and registered to be deallocated
+			// by setting its owned flag
+			Ctrl * p = c->GetParent();
+			if(p && dynamic_cast<_detail::Box*>(p)!=nullptr )
+			{
+				p->Remove();
+				if(IsOwned( p)){
+					LOG("An owned Box is deallocated");
+					delete p;
+				}else{
+					LOG("A box that's not owned");
+				}
+			}
+
 			c->Remove();
 	
 			if ( IsOwned ( c ) )
