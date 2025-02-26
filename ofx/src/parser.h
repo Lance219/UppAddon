@@ -1,5 +1,4 @@
 // internal header
-
 class Parser {
 public:
 	class Input {
@@ -33,6 +32,10 @@ public:
 
 		template <typename... Args>
 		void Error(std::format_string<Args...> fmt, Args&&...args);
+		
+		bool HasError()const{
+			return ds.Contains("errors") && ds["errors"].RecordCount()!=0;
+		}
 		
 		auto& error_table()
 		{
@@ -91,7 +94,7 @@ private:
 	bool ReadKeyValue(Input& in, int key_index, std::string& value);
 	bool ParseSGML(Input& in, Info& info);
 	std::string ReadValue(Input& in, bool oneline=false);
-	Time	ReadTimeValue(Input& in);
+	//Time	ReadTimeValue(Input& in);
 	std::string ReadOneLineValue(Input& in){
 		return ReadValue(in, true);
 	}
@@ -159,7 +162,7 @@ public:
 	constexpr static int IndexOfCloseTag(std::string_view tag)
 	{
 		auto i = IndexOfTag(tag);
-		ASSERT(i!=-1);
+//		ASSERT(i!=-1);
 		return -i-2;
 	}
 };

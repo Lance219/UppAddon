@@ -8,7 +8,9 @@
 #include <debug/log.h>
 
 namespace lz{
+inline namespace ofx{
 
 #include "src/parser.h"
 
+}
 }

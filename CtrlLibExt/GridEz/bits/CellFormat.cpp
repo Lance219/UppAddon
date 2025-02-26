@@ -20,7 +20,8 @@ CellFormat::CellFormat()
 		.BorderColor(SLtGray())
 		.HorzAlign(ALIGN_LEFT)
 		.VertAlign(ALIGN_CENTER)
-		.Padding(1);
+		.Padding(1)
+		.Margin(0);
 }
 
 const CellFormat& CellFormat::NullCellFormat()
@@ -38,8 +39,11 @@ CellFormat& CellFormat::DefaultCellFormat()
 bool CellFormat::AllPropertiesSet()const
 {
 	return !IsNull(bg) && !IsNull(fg) && !IsNull(bordercolor) &&
-		!IsNull(PaddingLeft()) && !IsNull(PaddingRight()) && !IsNull(PaddingTop()) &&
-		!IsNull(PaddingBottom()) && flags.borderLeft != BORDER_NULL &&
+		!IsNull(PaddingLeft()) && !IsNull(PaddingRight()) &&
+		!IsNull(PaddingTop()) && !IsNull(PaddingBottom()) &&
+		!IsNull(MarginLeft()) && !IsNull(MarginRight()) &&
+		!IsNull(MarginTop()) && !IsNull(MarginBottom()) &&
+		flags.borderLeft != BORDER_NULL &&
 		flags.borderRight != BORDER_NULL && flags.borderTop != BORDER_NULL &&
 		flags.borderBottom != BORDER_NULL && flags.halign != ALIGN_NULL &&
 		flags.valign != ALIGN_NULL && AllFontPropertiesSet();
@@ -68,17 +72,28 @@ void CellPainter::Paint()
 {
 	Rect r(cellrect);
 
-	r.left += PaddingLeft(),		r.right  -= PaddingRight(),
-	r.top  += PaddingTop() ,		r.bottom -= PaddingBottom();
+	r.left += MarginLeft(),		r.right  -= MarginRight(),
+	r.top  += MarginTop() ,		r.bottom -= MarginBottom();
 	if(r.left >= r.right || r.top >= r.bottom)
 		return;
 
 	w.Clip(visible_rect);
 	w.DrawRect(visible_rect, Paper());
 	DrawBorders();
-
+	r.left += PaddingLeft(),	r.right  -= PaddingRight(),
+	r.top  += PaddingTop() ,	r.bottom -= PaddingBottom();
+	if(r.left >= r.right || r.top >= r.bottom)
+		return;
 
 	if(ctrl != nullptr) {
+		//ctr.SetRect(di.cellrect-Point(1000,1000));
+		if(cellrect != visible_rect){
+			CheckBox(*ctrl, r, visible_rect);
+		}else{
+			if(IsBoxed(*ctrl))
+				Unbox(*ctrl);
+			ctrl->SetRect(r);
+		}
 //		if(cellrect != visible_rect)
 //		{
 //			CheckBox(*ctrl, cellrect, visible_rect);

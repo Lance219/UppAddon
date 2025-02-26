@@ -361,8 +361,9 @@ void MyApp::InitLayoutTab()
 	g.FontHeight(22)
 			.DefaultColWidthFromFont().DefaultRowHeightFromFont()
 			.NoBorders()
-			.Padding(5)
-			.FitColumns();
+			.PaddingTop(2).PaddingRight(5)
+			.FitColumns()
+			.HighlightCurRow(false);
 //			.FitRows()
 			
 			;//.NoFitColumns();
@@ -370,7 +371,7 @@ void MyApp::InitLayoutTab()
 	g.AddColumn(200).ScaleWeight(40);
 	g.AddColumn(70).ScaleWeight(10);
 	g.AddColumn(50).ScaleWeight(10);
-	g.AddColumn(50).ScaleWeight(50);
+	g.AddColumn(50).ScaleWeight(10);
 	for(int i=0; i<6; ++i)
 	{
 		static const char * prompts[]={"Normal", "V.split", "Small", "Special",
@@ -381,6 +382,4 @@ void MyApp::InitLayoutTab()
 		r.At(3).Create<Option>().SetLabel(t_("Bold"));
 		r.At(4).Create<Option>().SetLabel(t_("Italic"));
 	}
-//	r1.At(2).Create<DropList>().Add;
-	
 }

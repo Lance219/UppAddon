@@ -1,10 +1,10 @@
-static int const
+static constexpr int const
 	BORDER_NULL = 0,
 	BORDER_NONE = 1,
 	BORDER_SINGLE =2,
 	BORDER_THICK=3,
 	BORDER_DOUBLE=4;
-static int const
+static constexpr int const
 	DEFAULT_COL_WIDTH = -1,
 	DEFAULT_ROW_HEIGHT = -1;
 
@@ -15,7 +15,8 @@ public:
 	CellFormat();
 	/*_CXX23_CONSTEXPR*/ CellFormat(std::nullptr_t)
 	{
-		static_assert(std::is_same_v<decltype(paddingLeft),uint16>,
+		static_assert(std::is_same_v<decltype(paddingLeft),uint8> &&
+			std::is_same_v<decltype(marginLeft), uint8>,
 			"Changes in paddingLeft..'s type break initial assumption and the following code");
 		//paddingLeft = paddingRight = paddingTop
 		//	= paddingBottom = std::numeric_limits<decltype(paddingLeft)>::max();
@@ -99,6 +100,81 @@ public:
 	}
 
 	int	PaddingBottom()const{
+		int v = paddingBottom;
+		
+		if( v == std::numeric_limits<decltype(paddingLeft)>::max() )
+			v = Null;
+		return v;
+	}
+
+	CellFormat&		Margin(int value){
+		if(value < 0 || IsNull(value))
+			value = std::numeric_limits<decltype(paddingLeft)>::max();
+		ASSERT(value <= std::numeric_limits<decltype(paddingLeft)>::max());
+		paddingLeft = paddingRight = paddingBottom = paddingTop = value;
+		return *this;
+	}
+
+	CellFormat&		MarginLeft(int value){
+		if(value < 0 || IsNull(value))
+			value = std::numeric_limits<decltype(paddingLeft)>::max();
+		ASSERT(value <= std::numeric_limits<decltype(paddingLeft)>::max());
+		paddingLeft = value;
+		return *this;
+	}
+
+	CellFormat&		MarginRight(int value){
+		if(value < 0 || IsNull(value))
+			value = std::numeric_limits<decltype(paddingLeft)>::max();
+		ASSERT(value <= std::numeric_limits<decltype(paddingLeft)>::max());
+		paddingRight = value;
+		return *this;
+	}
+
+	CellFormat&		MarginTop(int value){
+		if(value < 0 || IsNull(value))
+			value = std::numeric_limits<decltype(paddingLeft)>::max();
+		ASSERT(value <= std::numeric_limits<decltype(paddingLeft)>::max());
+		paddingTop = value;
+		return *this;
+	}
+
+	CellFormat&		MarginBottom(int value){
+		if(value < 0 || IsNull(value))
+			value = std::numeric_limits<decltype(paddingLeft)>::max();
+		
+		ASSERT(value <= std::numeric_limits<decltype(paddingLeft)>::max());
+		
+		paddingBottom = value;
+		return *this;
+	}
+	
+	int	MarginLeft()const{
+		int v = paddingLeft;
+		
+		if( v == std::numeric_limits<decltype(paddingLeft)>::max() )
+			v = Null;
+		return v;
+	}
+
+	int	MarginRight()const{
+		int v = paddingRight;
+		
+		if( v == std::numeric_limits<decltype(paddingLeft)>::max() )
+			v = Null;
+		return v;
+	}
+
+
+	int	MarginTop()const{
+		int v = paddingTop;
+		
+		if( v == std::numeric_limits<decltype(paddingLeft)>::max() )
+			v = Null;
+		return v;
+	}
+
+	int	MarginBottom()const{
 		int v = paddingBottom;
 		
 		if( v == std::numeric_limits<decltype(paddingLeft)>::max() )
@@ -280,7 +356,8 @@ public:
 private:
 #include "CellFormatBitfields.h"
 	Upp::Font	font;
-	uint16		paddingLeft, paddingRight, paddingTop, paddingBottom;
+	uint8		paddingLeft, paddingRight, paddingTop, paddingBottom;
+	uint8		marginLeft, marginRight, marginTop, marginBottom;
 	Color		bg,fg,bordercolor;
 	Flags       flags;
 

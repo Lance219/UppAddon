@@ -179,14 +179,6 @@ void GridEz::Paint(Draw& w)
 					if(!HasChildDeep(&c)){
 						Add(c);
 					}
-					c.SetRect(di.cellrect-Point(1000,1000));
-					if(di.cellrect != di.visible_rect){
-						CheckBox(c, di.cellrect, di.visible_rect);
-					}else{
-						if(IsBoxed(c))
-							Unbox(c);
-						c.SetRect(di.cellrect);
-					}
 				}
 				else
 					di.text = row.GetText(di.col);

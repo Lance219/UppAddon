@@ -147,7 +147,7 @@ bool Parser::ReadMsgSRSV1(Input& in, Info& info, const char * tag)
 		r("LEDGERBALAMT") = ReadOneLineValue(in).c_str();
 		if( ReadTag(in, info, "DTASOF") )
 		{
-			r("LEDGERBALDTASOF") = ReadTimeValue(in);
+			r("LEDGERBALDTASOF") = ReadOneLineValue(in).c_str();
 		}
 		
 	}
@@ -157,7 +157,7 @@ bool Parser::ReadMsgSRSV1(Input& in, Info& info, const char * tag)
 		r("AVAILBALAMT") = ReadOneLineValue(in).c_str();
 		if( ReadTag(in, info, "DTASOF") )
 		{
-			r("AVAILDTASOF") = ReadTimeValue(in);
+			r("AVAILDTASOF") = ReadOneLineValue(in).c_str();
 		}
 	}
 	// DO WE WANT TO VALIDATE THE INPUT?
@@ -223,7 +223,7 @@ bool Parser::ReadSTMTTRN(Input& in, Info& info)
 	int tag;
 	Enter _(false);;
 	auto& r = info.stmt_trans().Append();
-	_.Dump(IndexOfCloseTag("STMTTRN"));
+	_.DumP(IndexOfCloseTag("STMTTRN"));
 	while( (tag = ReadTag(in, info))!=-1)
 	{
 		if(tag>=0)
