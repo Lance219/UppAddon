@@ -10,3 +10,7 @@ TOPIC("Util_en-us")
 #include "Util_en-us.tppi"
 END_TOPIC
 
+TOPIC("lz_RecordSet_en-us")
+#include "lz_RecordSet_en-us.tppi"
+END_TOPIC
+

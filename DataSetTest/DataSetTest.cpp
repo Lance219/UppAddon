@@ -8,17 +8,17 @@ using namespace Upp;
 
 void DataSetTest::SetUp()
 {
-	rs.AddField<char>("char")
-		.AddField<bool>("bool")
-		.AddField<bit>("bit")
-		.AddField<int>("int")
-		.AddField<unsigned>("unsigned")
-		.AddField<double>("double")
-		.AddField<float>("float")
-		.AddField<uint16>("uint16")
-		.AddField<int32>("int32")
-		.AddField<uint64>("uint64")
-		.AddField<String>("String")
+	rs.AddField<char>("char") // 1
+		.AddField<bool>("bool") // 2
+		.AddField<bit>("bit") // 3
+		.AddField<int>("int") //4
+		.AddField<unsigned>("unsigned") //5
+		.AddField<double>("double") //6
+		.AddField<float>("float")//7
+		.AddField<uint16>("uint16") //8
+		.AddField<int32>("int32")//9
+		.AddField<uint64>("uint64") //10
+		.AddField<String>("String") //11
 		.AddField<Date>("Date")
 		.AddField<Time>("Time")
 		.PhysicalLayout();
@@ -81,6 +81,30 @@ TEST_F(DataSetTest, SetNull)
 	EXPECT_EQ(rs["char"].IsNull(), false);
 	rs["char"].SetNull();
 	EXPECT_EQ(rs["char"].IsNull(), true);
+}
+
+
+TEST_F(DataSetTest, Sort)
+{
+	rs.Append();
+	rs["char"]='C'; // 1st field
+	rs["unsigned"]=700; // 5th field
+	rs["string"]="Hell0"; // 11th field
+	rs.Append();
+	rs["char"]='B';
+	rs["unsigned"]=1700;
+	rs["string"]="World";
+	rs.Append();
+	rs["char"]='F';
+	rs["unsigned"]=900;
+	rs["string"]="DataSet";
+	rs.Append();
+	rs["char"]='Z';
+	rs["unsigned"]=30;
+	rs["string"]="Sorting";
+	rs.Sort({1,-5,11});
+	EXPECT_EQ(rs[0]["char"].Get<char>(),'B');
+	
 }
 
 bool compare_record(const RecordSet::Record& lhs, const RecordSet::Record& rhs)

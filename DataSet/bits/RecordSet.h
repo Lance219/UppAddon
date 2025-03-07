@@ -64,7 +64,12 @@ class RecordSet
 			return data + row*GetRecordDef().GetRecordSize();
 		}
 
-		int GetFieldCount() const
+		auto GetFieldIndex(const char * fldName)const
+		{
+			return recordDef.GetFieldIndex(fldName);
+		}
+
+		auto GetFieldCount() const
 		{
 			return recordDef.GetFieldCount();
 		}
@@ -139,6 +144,20 @@ class RecordSet
 		Iterator End() const;
 
 		void Sort ( const Vector<int>& fields );
+		void Sort ( const char * sortby)
+		{
+			Vector<int> by = ParseSortBy(sortby);
+			Sort(sortby);
+		}
+//		template <typename...Ts>
+//		void Sort(Ts... args)
+//		{
+//			Vector<int> by;
+//			if constexpr(sizeof...(args)>=1){
+//				GetSortBy(by, std::forward<Ts>(args)...);
+//			}
+//			Sort(by);
+//		}
 
 		RecordSet& Erase ( int i );
 		RecordSet& Erase ( int i, int j );
@@ -232,7 +251,7 @@ class RecordSet
 
 		FieldValue operator[] ( const char* fieldName )
 		{
-			if(int i = this->GetRecordDef().GetFieldIndex ( fieldName ); i!=-1)[[likely]]
+			if(int i = GetFieldIndex ( fieldName ); i!=-1)[[likely]]
 			{
 				return this->operator() ( i );
 			}else{
@@ -266,7 +285,7 @@ class RecordSet
 
 		FieldValue operator() ( size_t row, const char *fldname )
 		{
-			return ( *this ) ( row, recordDef.GetFieldIndex ( fldname ) );
+			return ( *this ) ( row, GetFieldIndex ( fldname ) );
 		}
 
 
@@ -327,6 +346,9 @@ class RecordSet
 	private:
 		RecordSet& operator= ( const RecordSet& rhs );
 
+		Vector<int> ParseSortBy(const char* sortby);
+
+
 	public:
 
 };
@@ -382,6 +404,7 @@ inline const RecordSet::Record RecordSet::operator[] ( int i ) const
 	return const_cast<RecordSet&> ( *this ) [i];
 }
 
+
 // not intended for bit fields
 inline const char * FieldDef::FieldValue::location() const
 {
@@ -408,6 +431,7 @@ inline void FieldDef::FieldValue::MarkAsNotSet()
 		*fldDef
 	).MarkAsNotSet ( base );
 }
+
 
 
 namespace
@@ -466,11 +490,6 @@ inline	const typename Return<T>::type FieldDef::FieldValue::Get() const
 	return BitRet<T>::cast ( DoGet() );
 }
 
-//template <>
-//inline void Upp::IterSwap<RecordSet::Iterator> ( RecordSet::Iterator i, RecordSet::Iterator j )
-//{
-//	RecordSet::DoSwapRecord ( i, j );
-//}
 
 Upp::String SqlFieldValue (FieldDef::FieldValue v );
 

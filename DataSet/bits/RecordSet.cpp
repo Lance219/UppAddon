@@ -1,69 +1,75 @@
 #include "../DataSet.h"
 
+namespace Upp{
+using recordsetIter=lz::RecordSet::Iterator;
+template <>
+inline void IterSwap<recordsetIter> ( recordsetIter i, recordsetIter j )
+{
+	lz::RecordSet::DoSwapRecord ( i, j );
+}
+}
+
 BEGIN_NAMESPACE_LZ
 
 #define RECORDSET_SORT
 #ifdef RECORDSET_SORT
 
-struct CompareRecord {
-	CompareRecord(const Vector<int>& fields)
-		: fields(fields)
-	{
-	}
 
-	bool operator()(const RecordSet::Record& lhs, const RecordSet::Record& rhs) const;
-	const Vector<int>& fields;
-};
 
-void RecordSet::Sort(const Vector<int>& fields)
+
+void RecordSet::Sort(const Vector<int>& by)
 {
-	if(fields.IsEmpty())
+	if(by.IsEmpty())
 		return;
 
-	Upp::Sort__(Begin(), End(), CompareRecord(fields));
+	Upp::Sort(*this, [&, this](const Record& lhs, const Record& rhs){
+		for(int i = 0; i < by.GetCount(); ++i) {
+			int col = by[i];
+			bool desc = col < 0;
+			int comp = 0;
+	
+			if(desc)
+				col = -col;
+	
+			--col;
+	
+			FieldDef::FieldValue l = lhs[col], r = rhs[col];
+	
+			if(l.IsNull()) {
+				if(!r.IsNull())
+					comp = -1; // null is less than non-null
+				else
+					comp = 0; // null is same as null
+			}
+	
+			else if(r.IsNull()) {
+				comp = 1; // null is less than non-null
+			}
+	
+			else {
+				// both are non-null
+				comp = compare(l.GetFieldDef().GetFieldType(), l.location(), r.location());
+			}
+	
+			if(desc)
+				comp = -comp;
+	
+			if(comp < 0)
+				return true;
+			else if(comp > 0)
+				return false;
+		}
+	
+		return false;
+		
+	});
 }
 
-bool CompareRecord::operator()(const RecordSet::Record& lhs, const RecordSet::Record& rhs) const
+Vector<int> RecordSet::ParseSortBy ( const char * sortby)
 {
-	ASSERT(fields.GetCount() != 0);
-
-	for(int i = 0; i < fields.GetCount(); ++i) {
-		int col = fields[i];
-		bool desc = col < 0;
-		int comp = 0;
-
-		if(desc)
-			col = -col;
-
-		--col;
-
-		FieldDef::FieldValue l = lhs[col], r = rhs[col];
-
-		if(l.IsNull()) {
-			if(!r.IsNull())
-				comp = -1; // null is less than non-null
-		}
-
-		else if(r.IsNull()) {
-			comp = 1; // null is less than non-null
-		}
-
-		else {
-			// both are non-null
-			comp = compare(l.GetFieldDef().GetFieldType(), l.location(), r.location());
-		}
-
-		if(desc)
-			comp = -comp;
-
-		if(comp < 0)
-			return true;
-		else if(comp > 0)
-			return false;
-	}
-
-	return false;
+	return Vector<int>();
 }
+
 
 #endif
 
