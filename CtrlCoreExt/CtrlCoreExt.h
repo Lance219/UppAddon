@@ -80,10 +80,10 @@ struct CtrlHack : public Pte<CtrlHack>
 			bool			matched:1; // used by EditKeyValue
 		};
 	};
-	bool GetMatched()const{ return matched; }
+	bool IsMatched()const{ return matched; }
 	void SetMatched(int v){ matched = v;	}
-	int32 GetReserved()const{ return padding; }
-	void SetReserved(int32 v){ padding = v; }
+//	int32 GetReserved()const{ return padding; }
+//	void SetReserved(int32 v){ padding = v; }
 #endif
 	// end of block for added fields
 
@@ -242,18 +242,18 @@ inline auto& SetMatched ( CtrlClass auto& ctrl, bool v = true )
 
 inline auto SetMatched ( CtrlClass auto* ctrl, bool v = true )
 {
-	return &SetPaintAsFocused ( *ctrl, v );
+	return &SetMatched ( *ctrl, v );
 }
 
 
 inline bool GetMatched ( CtrlClass auto& ctrl )
 {
-	return reinterpret_cast<const CtrlHack*> ( &ctrl )->GetMatched();
+	return reinterpret_cast<const CtrlHack*> ( &ctrl )->IsMatched();
 }
 
 inline bool GetMatched ( CtrlClass auto* ctrl )
 {
-	return reinterpret_cast<const CtrlHack*> ( ctrl )->GetMatched();
+	return reinterpret_cast<const CtrlHack*> ( ctrl )->IsMatched();
 }
 
 
